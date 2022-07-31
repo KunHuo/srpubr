@@ -168,7 +168,14 @@ dir_create <- function(path){
 #' Add paragraphs of text in a 'Word' document
 #'
 #' @param x a docx device.
-#' @param value a character
+#' @param value a character.
+#' \itemize{
+#'  \item paragraph    Two or more new lines creates a paragraph
+#'  \item \code{"bold"}    Can be either \code{"*text in bold*"} or \code{"_text in bold_"}
+#'  \item \code{"italic"}  Can be either \code{"**text in bold**"} or \code{"__text in bold__"}
+#'  \item \code{"subscript"}  \code{"Normal~subscript~"}
+#'  \item \code{"superscript"}  \code{"Normal^superscript^"}
+#'}
 #' @param style paragraph style name
 #' @param pos where to add the new element relative to the cursor, one of "after", "before", "on"
 #'
@@ -181,6 +188,7 @@ body_add_par2 <- function(x, value, style = NULL, pos = "after"){
 
   for(i in seq_along(values)){
 
+   # print(values[i])
     mdpars <- md_to_officer(values[i])
     for(pgraph in mdpars){
       x <- officer::body_add_fpar(x, value = eval(parse(text = pgraph$fpar_cmd)), style = "Normal")
@@ -435,7 +443,9 @@ md_to_officer <- function(str){
   for(pgraph_raw in pgraphs){
 
     # Removing all of the carriage returns in the paragraph:
-    pgraph = gsub(pattern="(\r\n|\r|\n)", replacement=" ", pgraph_raw)
+     pgraph = gsub(pattern="(\r\n|\r|\n)", replacement=" ", pgraph_raw)
+
+    # pgraph = pgraph_raw
 
     # Storing the locations of the markdown in the string
     locs      = NULL
@@ -676,8 +686,3 @@ md_to_officer <- function(str){
     pgraph_idx = pgraph_idx + 1
   }
   pgraphs_parse}
-
-
-
-
-
