@@ -330,7 +330,7 @@ dummy.data.frame <- function(x,
 #' @return
 #' An object of the same sort as object with the new names assigned.
 #' @seealso [setNames]
-#' @export
+#' @keywords internal
 #'
 #' @examples
 #' set_names(1:5, names=letters[1:5])
@@ -688,12 +688,6 @@ is_empty <- function(x){
 }
 
 
-
-
-
-
-
-
 #' Merge two data frames by left
 #'
 #' @param x a data frame.
@@ -882,4 +876,20 @@ add_lables <- function(x, value){
   x
 }
 
+
+#' Execute a function
+#'
+#' @param what either a function or a non-empty character string naming the
+#' function to be called.
+#' @param ... arguments for what.
+#' @param envir an environment within which to evaluate the call. This will be
+#' most useful if what is a character string and the arguments are symbols or quoted expressions.
+#'
+#' @return The result of the (evaluated) function call.
+#' @export
+do_call <- function(what, ..., envir = parent.frame()){
+  args <- list(...)
+  args <- flatten_list(args)
+  do.call(what, args = args, quote = FALSE, envir = envir)
+}
 

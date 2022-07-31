@@ -48,7 +48,7 @@ theme_sci <- function(font.size = 12,
   }
 
   ggplot2::theme_bw(
-    base_size = font.size,
+    base_size   = font.size,
     base_family = font.family,
     base_line_size = line.size,
     base_rect_size = line.size) +
@@ -66,13 +66,13 @@ theme_sci <- function(font.size = 12,
       axis.line = ggplot2::element_line(size = line.size, color = "black",lineend = "square"),
       axis.ticks.length = ggplot2::unit(0.12, "cm"),
       axis.ticks = ggplot2::element_line(color = "black", size = line.size),
-      axis.text = ggplot2::element_text(color = "black", size = font.size),
+      axis.text  = ggplot2::element_text(color = "black", size = font.size),
       axis.title = ggplot2::element_text(color = "black", size = font.size, face = face),
 
       legend.background = ggplot2::element_rect(fill = "NA"),
-      legend.text = ggplot2::element_text(color = "black", size = font.size),
-      legend.title = ggplot2::element_text(face = face),
-      legend.key.size = ggplot2::unit(legend.key.size, "lines"),
+      legend.text       = ggplot2::element_text(color = "black", size = font.size),
+      legend.title      = ggplot2::element_text(face = face),
+      legend.key.size   = ggplot2::unit(legend.key.size, "lines"),
 
       plot.title = ggplot2::element_text(size = font.size + 2, face = face),
       plot.title.position = "plot",
@@ -97,7 +97,7 @@ theme_sci <- function(font.size = 12,
 #'
 #' @return a ggplot.
 #' @export
-legend_title <- function(value = NULL){
+gg_legend_title <- function(value = NULL){
   if(length(value) == 0L){
     ggplot2::theme(
       legend.title = ggplot2::element_blank()
@@ -114,7 +114,7 @@ legend_title <- function(value = NULL){
 #'
 #' @return a ggplot.
 #' @export
-legend_position <- function(position) {
+gg_legend_position <- function(position) {
   if(length(position) == 0L){
     ggplot2::theme(
       legend.position = "none"
@@ -134,7 +134,15 @@ legend_position <- function(position) {
 }
 
 
-rotate_x_text <- function (angle = 45, hjust = NULL, vjust = NULL, ...) {
+#' Rotate X axis text
+#'
+#' @param angle angle.
+#' @param hjust hjust.
+#' @param vjust vjust.
+#' @param ... more.
+#'
+#' @export
+gg_rotate_x_text <- function (angle = 45, hjust = NULL, vjust = NULL, ...) {
   if (missing(hjust) & angle > 5)
     hjust <- 1
   if (missing(vjust) & angle == 90)
@@ -143,7 +151,15 @@ rotate_x_text <- function (angle = 45, hjust = NULL, vjust = NULL, ...) {
 }
 
 
-rotate_y_text <- function (angle = 45, hjust = NULL, vjust = NULL, ...) {
+#' Rotate Y axis text
+#'
+#' @param angle angle.
+#' @param hjust hjust.
+#' @param vjust vjust.
+#' @param ... more.
+#'
+#' @export
+gg_rotate_y_text <- function (angle = 45, hjust = NULL, vjust = NULL, ...) {
   if (missing(hjust) & angle == 90)
     hjust <- 0.5
   else if (missing(hjust) & angle > 5)
@@ -192,18 +208,149 @@ rotate_y_text <- function (angle = 45, hjust = NULL, vjust = NULL, ...) {
     if(is.null(label)){
       plot
     }else{
-      plot + legend_title(label)
+      plot + gg_legend_title(label)
     }
   }else{
-    plot + legend_title(title)
+    plot + gg_legend_title(title)
   }
 }
 
 
 .set_legend_position <- function(plot, position){
   if(.is_waiver(position)){
-    plot + legend_position("right")
+    plot + gg_legend_position("right")
   }else{
-    plot + legend_position(position)
+    plot + gg_legend_position(position)
   }
+}
+
+
+#' Delete x title of ggplot2
+#'
+#' @export
+gg_delete_x_title <- function() {
+  ggplot2::theme(
+    axis.title.x = ggplot2::element_blank()
+  )
+}
+
+
+#' Delete y title of ggplot2
+#'
+#' @export
+gg_delete_y_title <- function() {
+  ggplot2::theme(
+    axis.title.y = ggplot2::element_blank()
+  )
+}
+
+
+#' Delete legend title of ggplot2
+#'
+#' @export
+gg_delete_legend_title <- function() {
+  ggplot2::theme(
+    legend.title = ggplot2::element_blank()
+  )
+}
+
+#' Delete legend of ggplot2
+#'
+#' @export
+gg_delete_legend <- function() {
+  ggplot2::theme(
+    legend.position = "none"
+  )
+}
+
+
+#' Figure label
+#'
+#' @param label label
+#'
+#' @export
+gg_tags <- function(label){
+  ggplot2::labs(title = label)
+}
+
+
+#' Modify axis labels
+#'
+#' @param label The title of the respective axis.
+#'
+#' @export
+gp_xlab <- function(label){
+  ggplot2::xlab(label = label)
+}
+
+
+
+#' Modify axis labels
+#'
+#' @param label The title of the respective axis.
+#'
+#' @export
+gp_ylab <- function(label){
+  ggplot2::ylab(label = label)
+}
+
+
+#' X breaks for continuous
+#'
+#' @param min min.
+#' @param max max.
+#' @param by by.
+#' @param expand expand.
+#'
+#' @export
+gg_xbreaks_continuous <- function(min, max, by, expand = TRUE){
+  if(expand){
+    ggplot2::scale_x_continuous(expand = c(0, 0), breaks = seq(min, max, by), limits = c(min, max))
+  }else{
+    ggplot2::scale_x_continuous(breaks = seq(min, max, by), limits = c(min, max))
+  }
+}
+
+
+#' Y breaks for continuous
+#'
+#' @param min min.
+#' @param max max.
+#' @param by by.
+#' @param expand expand.
+#'
+#' @export
+gg_ybreaks_continuous <- function(min, max, by, expand = TRUE){
+  if(expand){
+    ggplot2::scale_y_continuous(expand = c(0, 0), breaks = seq(min, max, by), limits = c(min, max))
+  }else{
+    ggplot2::scale_y_continuous(breaks = seq(min, max, by), limits = c(min, max))
+  }
+}
+
+
+#' Save a ggplot (or other grid object) with sensible defaults
+#'
+#' @param plot Plot to save, defaults to last plot displayed.
+#' @param path Path to save plot to (combined with file name).
+#' @param width Width, default 8.
+#' @param height Height.
+#' @param units Units, default cm.
+#' @param ... Other arguments passed on to the graphics device function, as specified by device.
+#'
+#' @export
+gg_save <- function(plot,
+                    path,
+                    width = 8,
+                    height = width / 8 * 7,
+                    units = "cm",
+                    ...) {
+  ggplot2::ggsave(
+    filename = path,
+    plot = plot,
+    width = width,
+    height = height,
+    units = units,
+    ...
+  )
 }
