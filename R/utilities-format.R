@@ -222,25 +222,4 @@ style_factor2 <- function(varname, levels, label, space) {
 }
 
 
-n_digits <- function(x){
-  x <- as.character(x)
-  sapply(x, function(i) {
-    i <- regex_split(i, pattern = ".", fixed = TRUE)
-    i <- unlist(i)
-    if (length(i) == 1L) {
-      0
-    } else{
-      nchar(i[2])
-    }
-  })
-}
 
-
-max_digits <- function(x){
-  max(n_digits(x), na.rm = TRUE)
-}
-
-
-max_nchar <- function(x){
-  max(sapply(x, nchar), na.rm = TRUE)
-}

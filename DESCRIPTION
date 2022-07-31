@@ -13,5 +13,4 @@ Imports:
     flextable,
     ggplot2,
     officer,
-    R.utils,
-    tibble
+    R.utils

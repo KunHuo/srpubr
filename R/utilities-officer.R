@@ -378,15 +378,6 @@ write_docx.list <- function(x, path = "", ...){
 
 #' @rdname write_docx
 #' @export
-write_docx.spubr <- function(x, path = "", ...){
-  get_docx() |>
-    body_add_dataframe(value = x, ...) |>
-    write_rdocx(path = path)
-}
-
-
-#' @rdname write_docx
-#' @export
 write_docx.rdocx <- function(x, path = "", ...){
   write_rdocx(x, path = path)
 }

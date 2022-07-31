@@ -5,7 +5,6 @@
 \alias{write_docx.default}
 \alias{write_docx.data.frame}
 \alias{write_docx.list}
-\alias{write_docx.spubr}
 \alias{write_docx.rdocx}
 \title{Write a object to MS-Word}
 \usage{
@@ -16,8 +15,6 @@ write_docx(x, path = "", ...)
 \method{write_docx}{data.frame}(x, path = "", ...)
 
 \method{write_docx}{list}(x, path = "", ...)
-
-\method{write_docx}{spubr}(x, path = "", ...)
 
 \method{write_docx}{rdocx}(x, path = "", ...)
 }
