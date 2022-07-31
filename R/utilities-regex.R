@@ -201,7 +201,13 @@ locate_start_end <- function(data){
   start <- data
   start[start == -1] <- NA
   end <- start + attr(data, "match.length") - 1
-  cbind(start, end)
+  res <- cbind(start, end)
+
+  if(any(is.na(res))){
+    res <- res[-1, ]
+  }
+
+  res
 }
 
 
