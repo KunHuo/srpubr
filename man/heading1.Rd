@@ -18,4 +18,3 @@ heading3(x)
 \description{
 Heading
 }
-\keyword{internal}

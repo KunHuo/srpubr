@@ -20,4 +20,3 @@ body_add_heading3(x, value)
 \description{
 Add heading of text in a 'Word' document
 }
-\keyword{internal}

@@ -16,4 +16,3 @@ body_add_dataframe(x, value, ...)
 \description{
 add data frame into a Word document
 }
-\keyword{internal}

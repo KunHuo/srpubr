@@ -25,4 +25,3 @@ body_add_par2(x, value, style = NULL, pos = "after")
 \description{
 Add paragraphs of text in a 'Word' document
 }
-\keyword{internal}

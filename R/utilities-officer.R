@@ -179,7 +179,6 @@ dir_create <- function(path){
 #' @param style paragraph style name
 #' @param pos where to add the new element relative to the cursor, one of "after", "before", "on"
 #'
-#' @keywords internal
 #' @export
 body_add_par2 <- function(x, value, style = NULL, pos = "after"){
   value <- paste(value, collapse = "\n")
@@ -228,7 +227,6 @@ body_add_tablenote <- function(x, value) {
 #' @param x a docx device.
 #' @param value a character
 #'
-#' @keywords internal
 #' @export
 body_add_heading1 <- function(x, value){
   body_add_par2(x, value = value, style = "heading 1")
@@ -255,7 +253,6 @@ body_add_heading3 <- function(x, value){
 #' @param value a data frame.
 #' @param ... arguments passed to flex_table.
 #'
-#' @keywords internal
 #' @export
 body_add_dataframe <- function(x, value, ...){
   if(!("flextable" %in% class(x))){
@@ -272,7 +269,6 @@ body_add_dataframe <- function(x, value, ...){
 #' Heading
 #'
 #' @param x a character.
-#' @keywords internal
 #' @export
 heading1 <- function(x){
   out <- list(text = as.character(x), style = "heading 1")
