@@ -1,11 +1,10 @@
 Package: srpubr
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Statistical Report for Publication Ready 
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Author: Rong-rui Huo
+Maintainer: Rong-rui Huo <huorongrui@163.com>
+Description: Statistical Report for Publication Ready.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
