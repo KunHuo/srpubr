@@ -279,7 +279,7 @@ gg_tags <- function(label){
 #' @param label The title of the respective axis.
 #'
 #' @export
-gp_xlab <- function(label){
+gg_xlab <- function(label){
   ggplot2::xlab(label = label)
 }
 
@@ -290,7 +290,7 @@ gp_xlab <- function(label){
 #' @param label The title of the respective axis.
 #'
 #' @export
-gp_ylab <- function(label){
+gg_ylab <- function(label){
   ggplot2::ylab(label = label)
 }
 

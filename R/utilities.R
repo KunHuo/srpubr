@@ -330,7 +330,7 @@ dummy.data.frame <- function(x,
 #' @return
 #' An object of the same sort as object with the new names assigned.
 #' @seealso [setNames]
-#' @keywords internal
+#' @export
 #'
 #' @examples
 #' set_names(1:5, names=letters[1:5])

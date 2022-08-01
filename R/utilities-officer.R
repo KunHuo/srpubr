@@ -123,9 +123,11 @@ flex_table <- function(data, headerlist = NULL, sep = "__", font.size = 11, ...)
 #' @return an object of class rdocx.
 #' @keywords internal
 #' @export
-get_docx <- function(path = NULL){
-  if(is.null(path)){
-    path <- get_template("template.docx")
+get_docx <- function(landscape = FALSE){
+  if(landscape){
+    path <- get_template("english_landscape.docx")
+  }else{
+    path <- get_template("english_portrait.docx")
   }
   officer::read_docx(path = path)
 }
@@ -296,8 +298,6 @@ heading3 <- function(x){
 
 
 write_rdocx <- function(x, path, ...){
-  # x <- officer::body_end_section_landscape(x)
-
   if(is.null(path)){
     stop("Path can not be empty.", call. = FALSE)
   }else{
@@ -318,18 +318,19 @@ write_rdocx <- function(x, path, ...){
 #'
 #' @param x a string, data frame or list.
 #' @param path file path.
+#' @param landscape add landscape section.
 #' @param ... unused.
 #'
 #' @export
-write_docx <- function(x, path = "", ...){
+write_docx <- function(x, path = "", landscape = FALSE, ...){
   UseMethod("write_docx")
 }
 
 
 #' @rdname write_docx
 #' @export
-write_docx.default <- function(x, path = "", ...){
-  get_docx() |>
+write_docx.default <- function(x, path = "", landscape = FALSE, ...){
+  get_docx(landscape = landscape) |>
     body_add_par2(value = as.character(x)) |>
     write_rdocx(path)
 }
@@ -337,8 +338,8 @@ write_docx.default <- function(x, path = "", ...){
 
 #' @rdname write_docx
 #' @export
-write_docx.data.frame <- function(x, path = "", ...){
-  doc <- get_docx()
+write_docx.data.frame <- function(x, path = "", landscape = FALSE, ...){
+  doc <- get_docx(landscape = landscape)
   title <- attr(x, "title")
   note <- attr(x, "note")
   if(length(title) != 0L){
@@ -354,8 +355,8 @@ write_docx.data.frame <- function(x, path = "", ...){
 
 #' @rdname write_docx
 #' @export
-write_docx.list <- function(x, path = "", ...){
-  doc <- get_docx()
+write_docx.list <- function(x, path = "", landscape = FALSE, ...){
+  doc <- get_docx(landscape = landscape)
   for(i in 1:length(x)){
     if(is.character(x[[i]]) | is.numeric(x)){
       doc <- body_add_par2(doc, value = x[[i]], style = "Normal")
@@ -392,7 +393,7 @@ write_docx.list <- function(x, path = "", ...){
 
 #' @rdname write_docx
 #' @export
-write_docx.rdocx <- function(x, path = "", ...){
+write_docx.rdocx <- function(x, path = "", landscape = FALSE, ...){
   write_rdocx(x, path = path)
 }
 
@@ -670,9 +671,9 @@ md_to_officer <- function(str){
     for(tmpele in pele){
       if(fpar_cmd != ""){
         fpar_cmd = paste(fpar_cmd, ',\n') }
-      fpar_cmd = paste(fpar_cmd, 'ftext("', tmpele$text, '", ', tmpele$props_cmd, ')', sep="")
+      fpar_cmd = paste(fpar_cmd, 'officer::ftext("', tmpele$text, '", ', tmpele$props_cmd, ')', sep="")
     }
-    fpar_cmd = paste("fpar(", fpar_cmd, ")", sep="")
+    fpar_cmd = paste("officer::fpar(", fpar_cmd, ")", sep="")
 
     pgraphs_parse[[paste("pgraph_", pgraph_idx, sep="")]]$pele      = pele
     pgraphs_parse[[paste("pgraph_", pgraph_idx, sep="")]]$locs      = locs

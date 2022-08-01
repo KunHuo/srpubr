@@ -8,20 +8,22 @@
 \alias{write_docx.rdocx}
 \title{Write a object to MS-Word}
 \usage{
-write_docx(x, path = "", ...)
+write_docx(x, path = "", landscape = FALSE, ...)
 
-\method{write_docx}{default}(x, path = "", ...)
+\method{write_docx}{default}(x, path = "", landscape = FALSE, ...)
 
-\method{write_docx}{data.frame}(x, path = "", ...)
+\method{write_docx}{data.frame}(x, path = "", landscape = FALSE, ...)
 
-\method{write_docx}{list}(x, path = "", ...)
+\method{write_docx}{list}(x, path = "", landscape = FALSE, ...)
 
-\method{write_docx}{rdocx}(x, path = "", ...)
+\method{write_docx}{rdocx}(x, path = "", landscape = FALSE, ...)
 }
 \arguments{
 \item{x}{a string, data frame or list.}
 
 \item{path}{file path.}
+
+\item{landscape}{add landscape section.}
 
 \item{...}{unused.}
 }

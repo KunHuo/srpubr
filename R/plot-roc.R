@@ -24,3 +24,6 @@ gg_roc <- function(data, outcome, exposures, smooth = TRUE, smooth.args = list()
     gg_legend_title(NULL) +
     gg_legend_position(c(1, 0))
 }
+
+
+sysfonts::font_add("simsun", "simsun.ttc")

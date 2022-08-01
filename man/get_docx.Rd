@@ -4,7 +4,7 @@
 \alias{get_docx}
 \title{Create a 'Word' document object}
 \usage{
-get_docx(path = NULL)
+get_docx(landscape = FALSE)
 }
 \value{
 an object of class rdocx.
