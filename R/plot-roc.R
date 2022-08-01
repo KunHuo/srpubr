@@ -1,29 +1,56 @@
-gg_roc <- function(data, outcome, exposures, smooth = TRUE, smooth.args = list(),  ci.method = c("delong", "bootstrap")){
-
-  # outcome   <- names(tidyselect::eval_select(rlang::enquo(outcome),   data = data))
-  # exposures <- names(tidyselect::eval_select(rlang::enquo(exposures), data = data))
+gg_roc <- function(data,
+                   outcome,
+                   exposure,
+                   positive = NULL,
+                   smooth = FALSE,
+                   auc = TRUE,
+                   auc.ci = TRUE,
+                   auc.digits = 3,
+                   smooth.args = list(),
+                   ci.method = c("delong", "bootstrap")){
 
   ci.method <- match.arg(ci.method)
 
-  g.list <- lapply(exposures, function(x){
-    res <- suppressMessages(pROC::roc(response = data[[outcome]], predictor = data[[x]]))
+  if(!is.factor(data[[outcome]])){
+    data[[outcome]] <- factor(data[[outcome]])
+  }
+
+  if(!is.null(positive)){
+    positive <- as.character(positive)
+    negative <- setdiff(unique(data[[outcome]]), positive)
+    data[[outcome]] <-  factor(data[[outcome]],  levels = c(negative, positive))
+  }
+
+  g.list <- lapply(exposure, function(x){
+    res <- pROC::roc(response  = data[[outcome]],
+                     predictor = data[[x]],
+                     direction = "<",
+                     levels    = levels(data[[outcome]]))
     if(smooth){
       res <- do_call(pROC::smooth, roc = res, smooth.args)
     }
     res
   })
 
-  names(g.list) <- exposures
+  legends <- exposure
 
-  suppressMessages(pROC::ggroc(g.list, legacy.axes = TRUE) +
-                     ggplot2::coord_cartesian(expand = FALSE) +
-                     ggplot2::geom_abline(intercept = 0, color = "darkgrey", linetype = "dashed", size = 0.25) +
-                     ggplot2::scale_x_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 1)) +
-                     ggplot2::scale_y_continuous(breaks = seq(0, 1, 0.2), limits = c(0, 1))) +
-    theme_sci() +
-    gg_legend_title(NULL) +
-    gg_legend_position(c(1, 0))
+  if(auc){
+    auc.data <- sapply(g.list, function(x){
+      format_digits(pROC::auc(x), auc.digits)
+    })
+
+    legends <- sprintf("%s (AUC = %s)", legends, auc.data)
+  }
+
+  names(g.list) <- legends
+
+  suppressMessages(
+    pROC::ggroc(g.list, legacy.axes = TRUE) +
+      ggplot2::geom_abline(intercept = 0, color = "darkgrey", linetype = "dashed", size = 0.25) +
+      gg_xbreaks_continuous(0, 1, by = 0.2) +
+      gg_ybreaks_continuous(0, 1, by = 0.2) +
+      theme_sci() +
+      gg_legend_title(NULL)
+    )
 }
 
-
-sysfonts::font_add("simsun", "simsun.ttc")
