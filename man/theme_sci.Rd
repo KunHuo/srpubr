@@ -42,7 +42,7 @@ theme_sci(
 
 \item{aspect.ratio}{the ratio of the width to the height, default NULL.}
 
-\item{...}{further arguments pass to the [ggplot2::theme] function.}
+\item{...}{further arguments pass to the \link[ggplot2:theme]{ggplot2::theme} function.}
 }
 \description{
 ggplo2 theme for SCI

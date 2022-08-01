@@ -9,11 +9,11 @@ md_to_officer(str)
 \arguments{
 \item{str}{string containing Markdown can contain the following elements:
 \itemize{
- \item paragraph    Two or more new lines creates a paragraph
- \item \code{"bold"}    Can be either \code{"*text in bold*"} or \code{"_text in bold_"}
- \item \code{"italic"}  Can be either \code{"**text in bold**"} or \code{"__text in bold__"}
- \item \code{"subscript"}  \code{"Normal~subscript~"}
- \item \code{"superscript"}  \code{"Normal^superscript^"}
+\item paragraph    Two or more new lines creates a paragraph
+\item \code{"bold"}    Can be either \code{"*text in bold*"} or \code{"_text in bold_"}
+\item \code{"italic"}  Can be either \code{"**text in bold**"} or \code{"__text in bold__"}
+\item \code{"subscript"}  \code{"Normal~subscript~"}
+\item \code{"superscript"}  \code{"Normal^superscript^"}
 }}
 }
 \value{

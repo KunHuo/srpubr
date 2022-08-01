@@ -61,8 +61,8 @@ Replace matched patterns in a string
 \section{Functions}{
 
 \itemize{
-  \item regex_replace: Replace first match.
-  \item regex_replace_all: Replace all matches.
+\item regex_replace: Replace first match.
+\item regex_replace_all: Replace all matches.
 }
 }
 

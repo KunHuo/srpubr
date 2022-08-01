@@ -16,7 +16,7 @@ given character vector. This can be a character string or a regular expression.}
 \item{pos}{integer, defining the start position for the search within x. The result will
 then be relative to the begin of the truncated string. Will be recycled.}
 
-\item{...}{the dots are passed to the function [regexpr].}
+\item{...}{the dots are passed to the function \link{regexpr}.}
 }
 \value{
 a vector of the first position of pattern in x
@@ -26,5 +26,5 @@ Returns the numeric position of the first occurrence of a substring within a
 string. If the search string is not found, the result will be NA.
 }
 \details{
-This is just a wrapper for the function [regexpr].
+This is just a wrapper for the function \link{regexpr}.
 }

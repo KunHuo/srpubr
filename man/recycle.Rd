@@ -19,5 +19,5 @@ This function recycles all supplied elments to the maximal dimension.
 recycle(x=1:5, y=1, s=letters[1:2])
 }
 \seealso{
-[rep], [replicate]
+\link{rep}, \link{replicate}
 }

@@ -73,5 +73,5 @@ fct_recode(likert, det=1:6, pas=7:8, pro=9:10)
 fct_recode(likert, "1"=1:6, "2"=7:8, "5"=9:10, num=TRUE)
 }
 \seealso{
-[factor], [levels]
+\link{factor}, \link{levels}
 }

@@ -49,8 +49,8 @@ special match like $) end will be one character less than start.
 \section{Functions}{
 
 \itemize{
-  \item regex_locate: Locate first match, return an integer matrix. First column gives start postion of match, and second column gives end position.
-  \item regex_locate_all: Locate all matches, return a list of integer matrices.
+\item regex_locate: Locate first match, return an integer matrix. First column gives start postion of match, and second column gives end position.
+\item regex_locate_all: Locate all matches, return a list of integer matrices.
 }
 }
 

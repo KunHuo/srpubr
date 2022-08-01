@@ -11,11 +11,11 @@ rename(x, ..., gsub = FALSE, fixed = TRUE, warn = TRUE)
 
 \item{...}{A sequence of named arguments, all of type character.}
 
-\item{gsub}{a logical value; if TRUE, [gsub] is used to change the row and column labels of
+\item{gsub}{a logical value; if TRUE, \link{gsub} is used to change the row and column labels of
 the resulting table. That is, instead of substituting whole names, substrings
 of the names of the object can changed.}
 
-\item{fixed}{a logical value, passed to [gsub]. If TRUE, substitutions are by fixed strings
+\item{fixed}{a logical value, passed to \link{gsub}. If TRUE, substitutions are by fixed strings
 and not by regular expressions.}
 
 \item{warn}{a logical value; should a warning be issued if those names to change are not found?}

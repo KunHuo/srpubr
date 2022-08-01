@@ -33,5 +33,5 @@ set_names(1:5, names=letters[1:5])
 set_names(1:5, letters[1:5])
 }
 \seealso{
-[setNames]
+\link{setNames}
 }

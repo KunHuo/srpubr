@@ -22,5 +22,5 @@ format_digits(43.25576, digits = 2)
 format_digits(43, digits = 5)
 }
 \seealso{
-[format]
+\link{format}
 }

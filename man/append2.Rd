@@ -65,5 +65,5 @@ z <- c(10, 20, 30)
 append2(d.frm, z, after=2, names="ZZZ")
 }
 \seealso{
-[rbind], [cbind], [append]
+\link{rbind}, \link{cbind}, \link{append}
 }

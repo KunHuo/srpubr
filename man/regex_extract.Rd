@@ -48,8 +48,8 @@ Extract matching patterns from a string
 \section{Functions}{
 
 \itemize{
-  \item regex_extract: Extract first match, return a vector.
-  \item regex_extract_all: Extract all matches, return a list.
+\item regex_extract: Extract first match, return a vector.
+\item regex_extract_all: Extract all matches, return a list.
 }
 }
 

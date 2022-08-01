@@ -24,7 +24,7 @@ The string(s) passed as x now with a maximum length of maxlen + 3 (for the ellip
 \description{
 Truncates one or more strings to a specified length, adding an ellipsis (...)
 to those strings that have been truncated. The truncation can also be performed
-using word boundaries. Use [str_align] to justify the strings if needed.
+using word boundaries. Use \link{str_align} to justify the strings if needed.
 }
 \examples{
 x <- c("this is short", "and this is a longer text",

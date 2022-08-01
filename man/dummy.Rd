@@ -106,5 +106,5 @@ dummy(mtcars, varnames = c("vs", "am"), sep = ".")
 Venables, W N and Ripley, B D (2002): Modern Applied Statistics with S. Fourth edition. Springer.
 }
 \seealso{
-[model.frame], [contrasts]
+\link{model.frame}, \link{contrasts}
 }
