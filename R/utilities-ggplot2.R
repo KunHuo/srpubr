@@ -3,7 +3,7 @@
 #' @param font.size font size, default 12,
 #' @param font.family font family, detault Times New Roman.
 #' @param line.size line size, default 0.25.
-#' @param legend.key.size legend key size, dsfault 0.8.
+#' @param legend.key.size legend key size, dsfault 1.
 #' @param face.bold a logical, whether bold the title of axis, plot, strip, and legend, default FALSE.
 #' @param panel.border a logical, whether plot panel border, default FALSE.
 #' @param aspect.ratio the ratio of the width to the height, default NULL.
@@ -14,10 +14,10 @@
 #' @param strip.background strip background.
 #'
 #' @export
-theme_sci <- function(font.size = 12,
+gg_theme_sci <- function(font.size = 12,
                       font.family = "serif",
                       line.size = 0.25,
-                      legend.key.size = 0.8,
+                      legend.key.size = 1.0,
                       face.bold = FALSE,
                       panel.grid.major = FALSE,
                       panel.grid.minor = FALSE,
@@ -39,7 +39,6 @@ theme_sci <- function(font.size = 12,
   }else{
     pg.minor = ggplot2::element_blank()
   }
-
 
   if(panel.border){
     pborder = ggplot2::element_rect(color = "black", size = line.size)
@@ -72,7 +71,7 @@ theme_sci <- function(font.size = 12,
       legend.background = ggplot2::element_rect(fill = "NA"),
       legend.text       = ggplot2::element_text(color = "black", size = font.size),
       legend.title      = ggplot2::element_text(face = face),
-      # legend.key.size   = ggplot2::unit(legend.key.size, "lines"),
+      legend.key.size   = ggplot2::unit(legend.key.size, "lines"),
 
       plot.title = ggplot2::element_text(size = font.size + 2, face = face),
       plot.title.position = "plot",
