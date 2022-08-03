@@ -7,7 +7,7 @@
 gg_tags(label)
 }
 \arguments{
-\item{label}{label}
+\item{label}{label.}
 }
 \description{
 Figure label

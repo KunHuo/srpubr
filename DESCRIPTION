@@ -1,7 +1,7 @@
 Package: srpubr
 Type: Package
 Title: Statistical Report for Publication Ready 
-Version: 0.1.0
+Version: 0.1.1
 Author: Rong-rui Huo
 Maintainer: Rong-rui Huo <huorongrui@163.com>
 Description: Statistical Report for Publication Ready.
@@ -17,5 +17,8 @@ Imports:
     glue,
     officer,
     pROC,
-    R.utils
+    R.utils,
+    showtext,
+    stats,
+    sysfonts
 URL: https://github.com/kunhuo/srpubr

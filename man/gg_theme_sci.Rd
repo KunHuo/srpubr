@@ -7,7 +7,8 @@
 gg_theme_sci(
   font.size = 12,
   font.family = "serif",
-  line.size = 0.25,
+  axis.line.size = 0.25,
+  axis.ticks.length = 0.15,
   legend.key.size = 1,
   face.bold = FALSE,
   panel.grid.major = FALSE,
@@ -24,7 +25,9 @@ gg_theme_sci(
 
 \item{font.family}{font family, detault Times New Roman.}
 
-\item{line.size}{line size, default 0.25.}
+\item{axis.line.size}{axis line size, default 0.25.}
+
+\item{axis.ticks.length}{axis ticks length, default 0.15.}
 
 \item{legend.key.size}{legend key size, dsfault 1.}
 

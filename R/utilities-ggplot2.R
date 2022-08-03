@@ -2,7 +2,8 @@
 #'
 #' @param font.size font size, default 12,
 #' @param font.family font family, detault Times New Roman.
-#' @param line.size line size, default 0.25.
+#' @param axis.line.size axis line size, default 0.25.
+#' @param axis.ticks.length axis ticks length, default 0.15.
 #' @param legend.key.size legend key size, dsfault 1.
 #' @param face.bold a logical, whether bold the title of axis, plot, strip, and legend, default FALSE.
 #' @param panel.border a logical, whether plot panel border, default FALSE.
@@ -16,7 +17,8 @@
 #' @export
 gg_theme_sci <- function(font.size = 12,
                       font.family = "serif",
-                      line.size = 0.25,
+                      axis.line.size = 0.25,
+                      axis.ticks.length = 0.15,
                       legend.key.size = 1.0,
                       face.bold = FALSE,
                       panel.grid.major = FALSE,
@@ -29,19 +31,19 @@ gg_theme_sci <- function(font.size = 12,
   face <- ifelse(face.bold, "bold", "plain")
 
   if(panel.grid.major){
-    pg.major = ggplot2::element_line(color = "gray90", size = line.size)
+    pg.major = ggplot2::element_line(color = "gray90", size = axis.line.size)
   }else{
     pg.major = ggplot2::element_blank()
   }
 
   if(panel.grid.minor){
-    pg.minor = ggplot2::element_line(color = "gray90", size = line.size, linetype = "dashed")
+    pg.minor = ggplot2::element_line(color = "gray90", size = axis.line.size, linetype = "dashed")
   }else{
     pg.minor = ggplot2::element_blank()
   }
 
   if(panel.border){
-    pborder = ggplot2::element_rect(color = "black", size = line.size)
+    pborder = ggplot2::element_rect(color = "black", size = axis.line.size)
   }else{
     pborder = ggplot2::element_rect(color = "NA")
   }
@@ -49,8 +51,8 @@ gg_theme_sci <- function(font.size = 12,
   ggplot2::theme_bw(
     base_size   = font.size,
     base_family = font.family,
-    base_line_size = line.size,
-    base_rect_size = line.size) +
+    base_line_size = axis.line.size,
+    base_rect_size = axis.line.size) +
 
     ggplot2::theme(
       panel.background = ggplot2::element_rect(fill = NA),
@@ -60,11 +62,11 @@ gg_theme_sci <- function(font.size = 12,
       panel.grid.minor = pg.minor,
       panel.spacing = ggplot2::unit(panel.spacing, "cm"),
 
-      strip.background = ggplot2::element_rect(fill = strip.background, size = line.size),
+      strip.background = ggplot2::element_rect(fill = strip.background, size = axis.line.size),
 
-      axis.line = ggplot2::element_line(size = line.size, color = "black",lineend = "square"),
-      axis.ticks.length = ggplot2::unit(0.15, "cm"),
-      axis.ticks = ggplot2::element_line(color = "black", size = line.size),
+      axis.line = ggplot2::element_line(size = axis.line.size, color = "black",lineend = "square"),
+      axis.ticks.length = ggplot2::unit(axis.ticks.length, "cm"),
+      axis.ticks = ggplot2::element_line(color = "black", size = axis.line.size),
       axis.text  = ggplot2::element_text(color = "black", size = font.size),
       axis.title = ggplot2::element_text(color = "black", size = font.size, face = face),
 
@@ -87,6 +89,60 @@ gg_theme_sci <- function(font.size = 12,
 
 .is_waiver <- function(value){
   class(value) == "waiver"
+}
+
+#' Bold axis title
+#'
+#' @param bold bold, default TRUE.
+#'
+#' @return a ggplot.
+#' @export
+gg_bold_axis_title <- function(bold = TRUE){
+  face <- ifelse(bold, "bold", "plain")
+  ggplot2::theme(
+    axis.title = ggplot2::element_text(face = face)
+  )
+}
+
+
+#' Bold tags
+#'
+#' @param bold bold, default TRUE.
+#'
+#' @return a ggplot.
+#' @export
+gg_bold_tags <- function(bold = TRUE){
+  face <- ifelse(bold, "bold", "plain")
+  ggplot2::theme(
+    plot.title = ggplot2::element_text(face = face)
+  )
+}
+
+
+#' Axis line size
+#'
+#' @param size size, default 0.25.
+#'
+#' @return a ggplot.
+#' @export
+gg_axis_line_size <- function(size = 0.25){
+  ggplot2::theme(
+    axis.line  = ggplot2::element_line(size = size),
+    axis.ticks = ggplot2::element_line(size = size)
+  )
+}
+
+
+#' Axis ticks length
+#'
+#' @param size size, default 0.15.
+#'
+#' @return a ggplot.
+#' @export
+gg_axis_ticks_length <- function(size = 0.15){
+  ggplot2::theme(
+    axis.ticks.length = ggplot2::unit(size, "cm"),
+  )
 }
 
 
@@ -265,7 +321,7 @@ gg_delete_legend <- function() {
 
 #' Figure label
 #'
-#' @param label label
+#' @param label label.
 #'
 #' @export
 gg_tags <- function(label){
@@ -335,6 +391,7 @@ gg_ybreaks_continuous <- function(min, max, by, expand = TRUE){
 #' @param width Width, default 8.
 #' @param height Height.
 #' @param units Units, default cm.
+#' @param language language.
 #' @param ... Other arguments passed on to the graphics device function, as specified by device.
 #'
 #' @export
@@ -343,13 +400,27 @@ gg_save <- function(plot,
                     width = 8,
                     height = width / 8 * 7,
                     units = "cm",
+                    language = "en",
                     ...) {
-  ggplot2::ggsave(
-    filename = path,
-    plot = plot,
-    width = width,
-    height = height,
-    units = units,
-    ...
-  )
+ if(language == "en"){
+   ggplot2::ggsave(
+     filename = path,
+     plot = plot,
+     width = width,
+     height = height,
+     units = units,
+     ...
+   )
+ }else{
+   showtext::showtext_auto()
+   ggplot2::ggsave(
+     filename = path,
+     plot = plot,
+     width = width,
+     height = height,
+     units = units,
+     ...
+   )
+   showtext::showtext_auto(FALSE)
+ }
 }

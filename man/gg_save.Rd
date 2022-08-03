@@ -4,7 +4,15 @@
 \alias{gg_save}
 \title{Save a ggplot (or other grid object) with sensible defaults}
 \usage{
-gg_save(plot, path, width = 8, height = width/8 * 7, units = "cm", ...)
+gg_save(
+  plot,
+  path,
+  width = 8,
+  height = width/8 * 7,
+  units = "cm",
+  language = "en",
+  ...
+)
 }
 \arguments{
 \item{plot}{Plot to save, defaults to last plot displayed.}
@@ -16,6 +24,8 @@ gg_save(plot, path, width = 8, height = width/8 * 7, units = "cm", ...)
 \item{height}{Height.}
 
 \item{units}{Units, default cm.}
+
+\item{language}{language.}
 
 \item{...}{Other arguments passed on to the graphics device function, as specified by device.}
 }
