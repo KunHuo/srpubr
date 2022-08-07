@@ -22,6 +22,17 @@
 #'
 #' @return a data frame.
 #' @export
+#'
+#' @examples
+#' roc(aSAH,
+#'     outcome  = "outcome",
+#'     exposure = c("age", "s100b"))
+#'
+#' # Combine with logistic regression.
+#' roc(aSAH,
+#'     outcome  = "outcome",
+#'     exposure = c("age", "s100b"),
+#'     combine  = TRUE)
 roc <- function(data,
                 outcome,
                 exposure,

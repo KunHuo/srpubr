@@ -55,3 +55,14 @@ a data frame.
 \description{
 Build ROCs
 }
+\examples{
+roc(aSAH,
+    outcome  = "outcome",
+    exposure = c("age", "s100b"))
+
+# Combine with logistic regression.
+roc(aSAH,
+    outcome  = "outcome",
+    exposure = c("age", "s100b"),
+    combine  = TRUE)
+}
