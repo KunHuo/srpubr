@@ -1,14 +1,14 @@
 Package: srpubr
 Type: Package
 Title: Statistical Report for Publication Ready 
-Version: 0.1.1
+Version: 0.1.2
 Author: Rong-rui Huo
 Maintainer: Rong-rui Huo <huorongrui@163.com>
 Description: Statistical Report for Publication Ready.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1
 Roxygen: list(markdown = TRUE)
 Imports: 
     flextable,
@@ -21,3 +21,5 @@ Imports:
     stats,
     sysfonts
 URL: https://github.com/kunhuo/srpubr
+Depends: 
+    R (>= 2.10)

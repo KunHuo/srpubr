@@ -166,59 +166,6 @@ string_specificity <- function(language){
 }
 
 
-.roc <- function(data,
-                 outcome,
-                 exposure,
-                 positive = NULL,
-                 combine = FALSE,
-                 combine.only = FALSE,
-                 smooth = FALSE,
-                 smooth.args = list()){
-
-  if(!is.factor(data[[outcome]])){
-    data[[outcome]] <- factor(data[[outcome]])
-  }
-
-  if(!is.null(positive)){
-    positive <- as.character(positive)
-    negative <- setdiff(unique(data[[outcome]]), positive)
-    data[[outcome]] <-  factor(data[[outcome]],  levels = c(negative, positive))
-  }
-
-  if(combine & length(exposure) != 1L){
-    data$combine <- .pred_prob(data = data, outcome = outcome, exposure = exposure)
-    if(combine.only){
-      exposure <- "combine"
-    }else{
-      exposure <- c(exposure, "combine")
-    }
-  }
-
-  data[exposure] <- lapply(data[exposure], function(x){
-    if(is.factor(x)){
-      as.numeric(x)
-    }else if(is.character(x)){
-      as.numeric(as.factor(x))
-    }else{
-      x
-    }
-  })
-
-  names(exposure) <- exposure
-
-  lapply(exposure, function(x){
-    res <- pROC::roc(response  = data[[outcome]],
-                     predictor = data[[x]],
-                     direction = "<",
-                     levels    = levels(data[[outcome]]))
-    if(smooth){
-      res <- do_call(pROC::smooth, roc = res, smooth.args)
-    }
-    res
-  })
-}
-
-
 .auc_string <- function(x, auc.ci = TRUE, digits = 2, method = "delong", boot.n = 1000, seed = 1234, progress = "text"){
   set.seed(seed)
   if(auc.ci){
