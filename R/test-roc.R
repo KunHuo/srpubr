@@ -24,6 +24,7 @@
 #' @export
 #'
 #' @examples
+#' # Basic example
 #' roc(aSAH,
 #'     outcome  = "outcome",
 #'     exposure = c("age", "s100b"))
@@ -37,13 +38,27 @@ roc <- function(data,
                 outcome,
                 exposure,
                 positive = NULL,
+                threshold = "best",
                 combine = FALSE,
                 combine.only = FALSE,
                 ci = TRUE,
                 ci.method = c("delong", "bootstrap"),
                 smooth = FALSE,
                 smooth.args = list(),
-                digits = 2){
+                digits = 2,
+                language  = c("en", "zh"),
+                progress = "win",
+                boot.n = 1000,
+                seed = 1234,
+                ...){
+
+
+  ci.method <- match.arg(ci.method)
+  language  <- match.arg(language)
+
+  if(ci.method == "bootstrap"){
+    smooth <- FALSE
+  }
 
   roclist <- .roc(data = data,
                   outcome  = outcome,
@@ -54,11 +69,23 @@ roc <- function(data,
                   smooth = smooth,
                   smooth.args = smooth.args)
 
-  res <- lapply(roclist, function(x){
-    .delong(x, ci = ci, digits = digits)
-  })
+  res <- Map(function(x, th){
+    if(ci.method == "delong"){
+      .delong(x, ci = ci, digits = digits, threshold = th)
+    }else{
+      .bootstrap(x, threshold = th, digits = digits, progress = progress, boot.n = boot.n, seed = seed)
+    }
+  }, roclist, threshold)
 
-  res <- list_rbind(res, varname = "Variable")
+  res <- list_rbind(res, varname = string_variable(language))
+
+  names(res)[names(res) == "Threshold"]   <- string_threshold(language)
+  names(res)[names(res) == "Accuracy"]    <- string_accuracy(language)
+  names(res)[names(res) == "Specificity"] <- string_specificity(language)
+  names(res)[names(res) == "Sensitivity"] <- string_sensitivity(language)
+  names(res)[names(res) == "PPV"]         <- string_PPV(language)
+  names(res)[names(res) == "NPV"]         <- string_NPV(language)
+  res[1][res[1] == "combine"]             <- string_combine(language)
 
   res
 
@@ -66,15 +93,15 @@ roc <- function(data,
 
 
 
-.delong <- function(object, ci = TRUE, digits = 2){
+.delong <- function(object, threshold = "best", ci = TRUE, digits = 2){
 
   fmt  <- sprintf("%%.%df (%%.%df-%%.%df)", digits, digits, digits)
   fmt1 <- sprintf("%%.%df", digits)
 
-  rets <- c("threshold", "accuracy", "specificity", "sensitivity", "ppv", "npv", "tp", "fp", "fn","tn")
+  rets <- c("threshold", "accuracy", "sensitivity", "specificity", "ppv", "npv", "tp", "fp", "fn","tn")
 
   coords <- pROC::coords(object,
-                         x = "best",
+                         x = threshold,
                          ret = rets,
                          transpose = TRUE)
 
@@ -108,7 +135,7 @@ roc <- function(data,
   AUC <- pROC::ci.auc(object)
 
   if(ci){
-    data.frame(Cutoff      = sprintf(fmt1, coords[["threshold"]]),
+    data.frame(Threshold   = sprintf(fmt1, coords[["threshold"]]),
                AUC         = sprintf(fmt,  AUC[2], AUC[1],    AUC[3]),
                Accuracy    = sprintf(fmt,  acc,    acc.lower, acc.upper),
                Specificity = sprintf(fmt,  sp,     sp.lower,  sp.upper),
@@ -117,7 +144,7 @@ roc <- function(data,
                NPV         = sprintf(fmt,  NPV,    NPV.lower, NPV.upper),
                stringsAsFactors = FALSE)
   }else{
-    data.frame(Cutoff      = sprintf(fmt1, coords[["threshold"]]),
+    data.frame(Threshold   = sprintf(fmt1, coords[["threshold"]]),
                AUC         = sprintf(fmt1, AUC[2]),
                Accuracy    = sprintf(fmt1, acc),
                Specificity = sprintf(fmt1, sp),
@@ -126,6 +153,48 @@ roc <- function(data,
                NPV         = sprintf(fmt1, NPV),
                stringsAsFactors = FALSE)
   }
+}
+
+
+.bootstrap <- function(object, threshold = "best", digits = 2, progress = "text", boot.n = 1000, seed = 1234){
+  set.seed(seed)
+  rets <- c("threshold", "accuracy", "sensitivity", "specificity", "ppv", "npv")
+  names(rets) <- c("Threshold", "Accuracy", "Sensitivity", "Specificity", "PPV", "NPV")
+
+  res1 <- pROC::coords(object,
+                       x = threshold,
+                       ret = rets,
+                       transpose = TRUE)
+
+  res2 <- pROC::ci.coords(object,
+                          x = threshold,
+                          ret = rets,
+                          transpose = TRUE,
+                          boot.n = boot.n,
+                          progress = progress)
+
+  fmt1 <- sprintf("%%.%df", digits)
+  fmt3 <- sprintf("%%.%df (%%.%df-%%.%df)", digits, digits, digits)
+
+  out <- lapply(rets, function(x){
+    if(x == "threshold"){
+      sprintf(fmt1, res1[x])
+    }else{
+      sprintf(fmt3, res1[x], res2[[x]][1], res2[[x]][3])
+    }
+  })
+
+  AUC <- pROC::ci.auc(object, method = "bootstrap", boot.n = boot.n, progress = progress)
+  AUC <- sprintf("%s (%s-%s)",
+                 format_digits(pROC::auc(object), digits),
+                 format_digits(AUC[[1]], digits),
+                 format_digits(AUC[[3]], digits))
+
+  out <- as.list(out)
+  out <- as.data.frame(out)
+  out <- append2(out, AUC, after = 1)
+  names(out)[2] <- "AUC"
+  out
 }
 
 
@@ -202,4 +271,58 @@ roc_test <- function(object, ...){
     row.names(out) <- NULL
     out
   }
+}
+
+string_variable <- function(language){
+  switch(language,
+         en = "Variable",
+         zh = "\u53d8\u91cf")
+}
+
+
+string_threshold <- function(language){
+  switch(language,
+         en = "Threshold",
+         zh = "\u4e34\u754c\u503c")
+}
+
+
+string_accuracy <- function(language){
+  switch(language,
+         en = "Accuracy",
+         zh = "\u51c6\u786e\u5ea6")
+}
+
+string_combine <- function(language){
+  switch(language,
+         en = "Combine",
+         zh = "\u8054\u5408")
+}
+
+
+string_sensitivity <- function(language){
+  switch(language,
+         en = "Sensitivity",
+         zh = "\u654f\u611f\u5ea6")
+}
+
+
+string_specificity <- function(language){
+  switch(language,
+         en = "Specificity",
+         zh = "\u7279\u5f02\u5ea6")
+}
+
+
+string_PPV <- function(language){
+  switch(language,
+         en = "PPV",
+         zh = "\u9633\u6027\u9884\u6d4b\u503c")
+}
+
+
+string_NPV <- function(language){
+  switch(language,
+         en = "NPV",
+         zh = "\u9634\u6027\u9884\u6d4b\u503c")
 }

@@ -130,27 +130,6 @@ gg_roc <- function(data,
 }
 
 
-string_combine <- function(language){
-  switch(language,
-         en = "Combine",
-         zh = "\u8054\u5408")
-}
-
-
-string_sensitivity <- function(language){
-  switch(language,
-         en = "Sensitivity",
-         zh = "\u654f\u611f\u5ea6")
-}
-
-
-string_specificity <- function(language){
-  switch(language,
-         en = "Specificity",
-         zh = "\u7279\u5f02\u5ea6")
-}
-
-
 .pred_prob <- function(data, outcome, exposure, newdata = NULL){
   frm <- paste(exposure, collapse = " + ")
   frm <- paste(outcome, frm, sep  = " ~ ")
