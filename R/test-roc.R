@@ -19,6 +19,14 @@
 #' first letter is sufficient. If omitted, the appropriate method is selected as
 #' explained in details.
 #' @param digits digits, default 2.
+#' @param threshold threshold, default "best", the optimal cut-off is the threshold
+#' that calculating by youden index.
+#' @param language language, typically “en”, or "zh", default "en".
+#' @param progress the name of progress bar to display. Typically “none”, “win”,
+#' “tk” or “text”.
+#' @param boot.n the number of bootstrap replicates, default 1000.
+#' @param seed seed, default 1234.
+#' @param ... unused arguments.
 #'
 #' @return a data frame.
 #' @export
@@ -79,16 +87,80 @@ roc <- function(data,
 
   res <- list_rbind(res, varname = string_variable(language))
 
+
   names(res)[names(res) == "Threshold"]   <- string_threshold(language)
-  names(res)[names(res) == "Accuracy"]    <- string_accuracy(language)
-  names(res)[names(res) == "Specificity"] <- string_specificity(language)
-  names(res)[names(res) == "Sensitivity"] <- string_sensitivity(language)
-  names(res)[names(res) == "PPV"]         <- string_PPV(language)
-  names(res)[names(res) == "NPV"]         <- string_NPV(language)
   res[1][res[1] == "combine"]             <- string_combine(language)
+
+  if(ci){
+    names(res)[names(res) == "AUC"]         <- paste("AUC",                        "(95% CI)", sep = " ")
+    names(res)[names(res) == "Accuracy"]    <- paste(string_accuracy(language),    "(95% CI)", sep = " ")
+    names(res)[names(res) == "Specificity"] <- paste(string_specificity(language), "(95% CI)", sep = " ")
+    names(res)[names(res) == "Sensitivity"] <- paste(string_sensitivity(language), "(95% CI)", sep = " ")
+    names(res)[names(res) == "PPV"]         <- paste(string_PPV(language),         "(95% CI)", sep = " ")
+    names(res)[names(res) == "NPV"]         <- paste(string_NPV(language),         "(95% CI)", sep = " ")
+  }else{
+    names(res)[names(res) == "Accuracy"]    <- string_accuracy(language)
+    names(res)[names(res) == "Specificity"] <- string_specificity(language)
+    names(res)[names(res) == "Sensitivity"] <- string_sensitivity(language)
+    names(res)[names(res) == "PPV"]         <- string_PPV(language)
+    names(res)[names(res) == "NPV"]         <- string_NPV(language)
+  }
+
+  res <- tibble::as_tibble(res)
+
+  args <- list(
+    data = data,
+    outcome = outcome,
+    exposure = exposure,
+    positive = positive,
+    threshold = threshold,
+    combine = combine,
+    combine.only = combine.only,
+    ci = ci,
+    ci.method = ci.method,
+    smooth = smooth,
+    smooth.args = smooth.args,
+    digits = digits,
+    language  = language,
+    progress = progress,
+    boot.n = boot.n,
+    seed = seed
+  )
+
+  attr(res, "args") <- args
+
+  class(res) <- c("srp.roc", class(res))
+  res <- add_title(res, "Performance metrics")
+  res <- add_note(res, "Abbreviations: AUC, Area under the receiver operating characteristic curve; CI, Confidence interval; PPV, Positive predictive value; NPV, Negative predictive value.")
 
   res
 
+}
+
+
+#' Print class of 'srp.roc'
+#'
+#' @param x an object.
+#' @param ... passed to print.
+#'
+#' @keywords internal
+#'
+#' @export
+print.srp.roc <- function(x, ...){
+  title <- attr(x, "title")
+  note  <- attr(x, "note")
+
+  cat("\n")
+
+  if(!is.null(title)){
+    cat(title, "\n")
+  }
+  print_booktabs(x, adj = c("left", "center"))
+
+  if(!is.null(note)){
+    cat(note)
+  }
+  cat("\n\n")
 }
 
 
@@ -138,8 +210,8 @@ roc <- function(data,
     data.frame(Threshold   = sprintf(fmt1, coords[["threshold"]]),
                AUC         = sprintf(fmt,  AUC[2], AUC[1],    AUC[3]),
                Accuracy    = sprintf(fmt,  acc,    acc.lower, acc.upper),
-               Specificity = sprintf(fmt,  sp,     sp.lower,  sp.upper),
                Sensitivity = sprintf(fmt,  se,     se.lower,  se.upper),
+               Specificity = sprintf(fmt,  sp,     sp.lower,  sp.upper),
                PPV         = sprintf(fmt,  PPV,    PPV.lower, PPV.upper),
                NPV         = sprintf(fmt,  NPV,    NPV.lower, NPV.upper),
                stringsAsFactors = FALSE)
@@ -147,8 +219,8 @@ roc <- function(data,
     data.frame(Threshold   = sprintf(fmt1, coords[["threshold"]]),
                AUC         = sprintf(fmt1, AUC[2]),
                Accuracy    = sprintf(fmt1, acc),
-               Specificity = sprintf(fmt1, sp),
                Sensitivity = sprintf(fmt1, se),
+               Specificity = sprintf(fmt1, sp),
                PPV         = sprintf(fmt1, PPV),
                NPV         = sprintf(fmt1, NPV),
                stringsAsFactors = FALSE)

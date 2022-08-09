@@ -19,7 +19,8 @@ Imports:
     R.utils,
     showtext,
     stats,
-    sysfonts
+    sysfonts,
+    tibble
 URL: https://github.com/kunhuo/srpubr
 Depends: 
     R (>= 2.10)

@@ -23,7 +23,7 @@ gg_roc(
   language = c("en", "zh"),
   font.family = "serif",
   font.size = 12,
-  progress = "text",
+  progress = "win",
   boot.n = 1000,
   seed = 1234,
   ...

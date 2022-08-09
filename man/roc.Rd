@@ -9,13 +9,19 @@ roc(
   outcome,
   exposure,
   positive = NULL,
+  threshold = "best",
   combine = FALSE,
   combine.only = FALSE,
   ci = TRUE,
   ci.method = c("delong", "bootstrap"),
   smooth = FALSE,
   smooth.args = list(),
-  digits = 2
+  digits = 2,
+  language = c("en", "zh"),
+  progress = "win",
+  boot.n = 1000,
+  seed = 1234,
+  ...
 )
 }
 \arguments{
@@ -30,6 +36,9 @@ or a numerical variable, but must be a binary variable.}
 By default, positive is automatically defined. If outcome is a factor variable,
 then positive is defined as the highest level. If outcome is a numerical
 variable, then positive is defined as the largest value.}
+
+\item{threshold}{threshold, default "best", the optimal cut-off is the threshold
+that calculating by youden index.}
 
 \item{combine}{a logical, indicating whether to use multiple exposure variables
 for joint prediction using logistic regression.}
@@ -48,6 +57,17 @@ explained in details.}
 \item{smooth.args}{further arguments for smooth, see \link[pROC:smooth]{pROC::smooth} function.}
 
 \item{digits}{digits, default 2.}
+
+\item{language}{language, typically “en”, or "zh", default "en".}
+
+\item{progress}{the name of progress bar to display. Typically “none”, “win”,
+“tk” or “text”.}
+
+\item{boot.n}{the number of bootstrap replicates, default 1000.}
+
+\item{seed}{seed, default 1234.}
+
+\item{...}{unused arguments.}
 }
 \value{
 a data frame.
@@ -56,6 +76,7 @@ a data frame.
 Build ROCs
 }
 \examples{
+# Basic example
 roc(aSAH,
     outcome  = "outcome",
     exposure = c("age", "s100b"))
