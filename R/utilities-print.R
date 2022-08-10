@@ -1,5 +1,14 @@
 print_booktabs <- function(data, sep = "__", adj = NULL){
 
+  title <- attr(data, "title")
+  note  <- attr(data, "note")
+
+  cat("\n")
+
+  if(!is.null(title)){
+    cat(title, "\n")
+  }
+
   pad_df <- function(data, adj = "left"){
     if(length(adj) != ncol(data)){
       adj <- c(adj,  rep(adj[length(adj)], ncol(data) - length(adj) ))
@@ -92,6 +101,11 @@ print_booktabs <- function(data, sep = "__", adj = NULL){
     data <- pad_df(data, adj = adj)
     print_lines(data, n.title = 1, n.space = 3)
   }
+
+  if(!is.null(note)){
+    cat(note)
+  }
+  cat("\n\n")
 }
 
 

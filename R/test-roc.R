@@ -18,7 +18,10 @@
 #' @param ci.method the method to use, either “delong” or “bootstrap”. The
 #' first letter is sufficient. If omitted, the appropriate method is selected as
 #' explained in details.
+#' @param ci.sep the separator for CI.
+#' @param ci.branket the branket for CI.
 #' @param digits digits, default 2.
+#' @param percent percenttage, default FALSE.
 #' @param threshold threshold, default "best", the optimal cut-off is the threshold
 #' that calculating by youden index.
 #' @param language language, typically “en”, or "zh", default "en".
@@ -52,9 +55,12 @@ roc <- function(data,
                 combine.only = FALSE,
                 ci = TRUE,
                 ci.method = c("delong", "bootstrap"),
+                ci.sep = NULL,
+                ci.branket = c("(", "["),
                 smooth = FALSE,
                 smooth.args = list(),
                 digits = 2,
+                percent = FALSE,
                 language  = c("en", "zh"),
                 table.number = NULL,
                 progress = "win",
@@ -63,8 +69,9 @@ roc <- function(data,
                 ...){
 
 
-  ci.method <- match.arg(ci.method)
-  language  <- match.arg(language)
+  ci.method  <- match.arg(ci.method)
+  language   <- match.arg(language)
+  ci.branket <- match.arg(ci.branket)
 
   if(ci.method == "bootstrap"){
     smooth <- FALSE
@@ -81,9 +88,9 @@ roc <- function(data,
 
   res <- Map(function(x, th){
     if(ci.method == "delong"){
-      .delong(x, ci = ci, digits = digits, threshold = th)
+      .delong(x, ci = ci, digits = digits, threshold = th, ci.sep = ci.sep, ci.branket = ci.branket, percent = percent)
     }else{
-      .bootstrap(x, threshold = th, digits = digits, progress = progress, boot.n = boot.n, seed = seed)
+      .bootstrap(x, threshold = th, digits = digits, progress = progress, boot.n = boot.n, seed = seed, ci.sep = ci.sep, ci.branket = ci.branket, percent = percent)
     }
   }, roclist, threshold)
 
@@ -110,6 +117,10 @@ roc <- function(data,
 
   res <- tibble::as_tibble(res)
 
+  if(nrow(res) <= 3L){
+    res <- transpose(res)
+  }
+
   args <- list(
     data = data,
     outcome = outcome,
@@ -133,7 +144,16 @@ roc <- function(data,
 
   class(res) <- c("srp.roc", class(res))
   res <- add_title(res, string_title_roc(language, table.number))
-  res <- add_note(res, string_note_roc(language))
+  res <- add_note(res, string_note_roc(language, ci = ci))
+
+
+  if(ci){
+    if(ci.method == "bootstrap"){
+      res <- add_note(res, sprintf("The 95%% CI is computed with %d stratified bootstrap replicates.", boot.n))
+    }else{
+      res <- add_note(res, "The 95% CI is computed with delong method.")
+    }
+  }
 
   res
 
@@ -149,27 +169,14 @@ roc <- function(data,
 #'
 #' @export
 print.srp.roc <- function(x, ...){
-  title <- attr(x, "title")
-  note  <- attr(x, "note")
-
-  cat("\n")
-
-  if(!is.null(title)){
-    cat(title, "\n")
-  }
   print_booktabs(x, adj = c("left", "center"))
-
-  if(!is.null(note)){
-    cat(note)
-  }
-  cat("\n\n")
 }
 
 
 
-.delong <- function(object, threshold = "best", ci = TRUE, digits = 2){
+.delong <- function(object, threshold = "best", percent = FALSE, ci = TRUE, digits = 2, ci.sep = NULL, ci.branket = "("){
 
-  fmt  <- sprintf("%%.%df (%%.%df-%%.%df)", digits, digits, digits)
+  fmt  <- fmt_ci_3(digits = digits, sep = ci.sep, bracket = ci.branket)
   fmt1 <- sprintf("%%.%df", digits)
 
   rets <- c("threshold", "accuracy", "sensitivity", "specificity", "ppv", "npv", "tp", "fp", "fn","tn")
@@ -206,6 +213,29 @@ print.srp.roc <- function(x, ...){
   NPV.lower <- NPV - q * sqrt(NPV * (1 - NPV) / (tn + fn))
   NPV.upper <- NPV + q * sqrt(NPV * (1 - NPV) / (tn + fn))
 
+
+  if(percent){
+    acc       <- acc * 100
+    acc.lower <- acc.lower * 100
+    acc.upper <- acc.upper * 100
+
+    se       <- se * 100
+    se.lower <- se.lower * 100
+    se.upper <- se.upper * 100
+
+    sp       <- sp * 100
+    sp.lower <- sp.lower * 100
+    sp.upper <- sp.upper * 100
+
+    PPV       <- PPV * 100
+    PPV.lower <- PPV.lower * 100
+    PPV.upper <- PPV.upper * 100
+
+    NPV       <- NPV * 100
+    NPV.lower <- NPV.lower * 100
+    NPV.upper <- NPV.upper * 100
+  }
+
   AUC <- pROC::ci.auc(object)
 
   if(ci){
@@ -230,7 +260,7 @@ print.srp.roc <- function(x, ...){
 }
 
 
-.bootstrap <- function(object, threshold = "best", digits = 2, progress = "text", boot.n = 1000, seed = 1234){
+.bootstrap <- function(object, threshold = "best", percent = FALSE, digits = 2, ci.sep = NULL, ci.branket = "(", progress = "text", boot.n = 1000, seed = 1234){
   set.seed(seed)
   rets <- c("threshold", "accuracy", "sensitivity", "specificity", "ppv", "npv")
   names(rets) <- c("Threshold", "Accuracy", "Sensitivity", "Specificity", "PPV", "NPV")
@@ -248,13 +278,17 @@ print.srp.roc <- function(x, ...){
                           progress = progress)
 
   fmt1 <- sprintf("%%.%df", digits)
-  fmt3 <- sprintf("%%.%df (%%.%df-%%.%df)", digits, digits, digits)
+  fmt3 <- fmt_ci_3(digits = digits, sep = ci.sep, bracket = ci.branket)
 
   out <- lapply(rets, function(x){
     if(x == "threshold"){
       sprintf(fmt1, res1[x])
     }else{
-      sprintf(fmt3, res1[x], res2[[x]][1], res2[[x]][3])
+      if(percent){
+        sprintf(fmt3, res1[x] * 100, res2[[x]][1] * 100, res2[[x]][3] * 100)
+      }else{
+        sprintf(fmt3, res1[x], res2[[x]][1], res2[[x]][3])
+      }
     }
   })
 
@@ -414,8 +448,14 @@ string_title_roc <- function(language, number = NULL){
 }
 
 
-string_note_roc <- function(language){
-  switch(language,
-         en = "Abbreviations: AUC, Area under the receiver operating characteristic curve; CI, Confidence interval; PPV, Positive predictive value; NPV, Negative predictive value.",
-         zh = "\u7f29\u7565\u8bcd\uff1a\u0041\u0055\u0043\u002c\u0020\u53d7\u8bd5\u8005\u5de5\u4f5c\u7279\u5f81\u66f2\u7ebf\u003b\u0020\u0043\u0049\u002c\u0020\u53ef\u4fe1\u533a\u95f4\u3002")
+string_note_roc <- function(language, ci = TRUE){
+  if(ci){
+    switch(language,
+           en = "Abbreviations: AUC, Area under the curve; CI, Confidence interval; PPV, Positive predictive value; NPV, Negative predictive value.",
+           zh = "\u7f29\u7565\u8bcd\uff1a\u0041\u0055\u0043\u002c\u0020\u66f2\u7ebf\u4e0b\u9762\u79ef\u003b\u0020\u0043\u0049\u002c\u0020\u53ef\u4fe1\u533a\u95f4\u3002")
+  }else{
+    switch(language,
+           en = "Abbreviations: AUC, Area under the curve; PPV, Positive predictive value; NPV, Negative predictive value.",
+           zh = "\u7f29\u7565\u8bcd\uff1a\u0041\u0055\u0043\u002c\u0020\u66f2\u7ebf\u4e0b\u9762\u79ef\u3002")
+  }
 }

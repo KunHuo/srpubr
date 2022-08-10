@@ -192,7 +192,7 @@ body_add_par2 <- function(x, value, style = NULL, pos = "after"){
    # print(values[i])
     mdpars <- md_to_officer(values[i])
     for(pgraph in mdpars){
-      x <- officer::body_add_fpar(x, value = eval(parse(text = pgraph$fpar_cmd)), style = "Normal")
+      x <- officer::body_add_fpar(x, value = eval(parse(text = pgraph$fpar_cmd)), style = style)
     }
     # x <- officer::body_add_par(x, value = values[i], style = style, pos = "after")
   }
@@ -216,9 +216,23 @@ body_add_tablenote <- function(x, value) {
     }else{
       padding.top <- 0
     }
-    paragraph <- officer::fpar( officer::ftext(values[i]),
-      fp_p = officer::fp_par(text.align = "left", padding.top = padding.top, line_spacing = 1.5))
-    x <- officer::body_add_fpar(x, value = paragraph)
+
+    mdpars <- md_to_officer(values[i])
+
+    for(pgraph in mdpars){
+
+      text <- eval(parse(text = pgraph$fpar_cmd))
+      text$fp_p$line_spacing <- 1.5
+      text$fp_p$padding.top  <- padding.top
+      # cat("\n------------------\n")
+
+      x <- officer::body_add_fpar(x, value = text)
+    }
+
+     # paragraph <- officer::fpar( officer::ftext(values[i]), fp_p = officer::fp_par(text.align = "left", padding.top = padding.top, line_spacing = 1.5))
+     #
+     #
+     # x <- officer::body_add_fpar(x, value = paragraph)
   }
   x
 }

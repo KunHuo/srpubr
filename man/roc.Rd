@@ -14,9 +14,12 @@ roc(
   combine.only = FALSE,
   ci = TRUE,
   ci.method = c("delong", "bootstrap"),
+  ci.sep = NULL,
+  ci.branket = c("(", "["),
   smooth = FALSE,
   smooth.args = list(),
   digits = 2,
+  percent = FALSE,
   language = c("en", "zh"),
   table.number = NULL,
   progress = "win",
@@ -53,11 +56,17 @@ joint predictions.}
 first letter is sufficient. If omitted, the appropriate method is selected as
 explained in details.}
 
+\item{ci.sep}{the separator for CI.}
+
+\item{ci.branket}{the branket for CI.}
+
 \item{smooth}{a logical, indicating whether to smooth a ROC curve.}
 
 \item{smooth.args}{further arguments for smooth, see \link[pROC:smooth]{pROC::smooth} function.}
 
 \item{digits}{digits, default 2.}
+
+\item{percent}{percenttage, default FALSE.}
 
 \item{language}{language, typically “en”, or "zh", default "en".}
 
