@@ -18,6 +18,7 @@ roc(
   smooth.args = list(),
   digits = 2,
   language = c("en", "zh"),
+  table.number = NULL,
   progress = "win",
   boot.n = 1000,
   seed = 1234,
@@ -59,6 +60,8 @@ explained in details.}
 \item{digits}{digits, default 2.}
 
 \item{language}{language, typically “en”, or "zh", default "en".}
+
+\item{table.number}{table number.}
 
 \item{progress}{the name of progress bar to display. Typically “none”, “win”,
 “tk” or “text”.}

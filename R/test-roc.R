@@ -22,6 +22,7 @@
 #' @param threshold threshold, default "best", the optimal cut-off is the threshold
 #' that calculating by youden index.
 #' @param language language, typically “en”, or "zh", default "en".
+#' @param table.number table number.
 #' @param progress the name of progress bar to display. Typically “none”, “win”,
 #' “tk” or “text”.
 #' @param boot.n the number of bootstrap replicates, default 1000.
@@ -55,6 +56,7 @@ roc <- function(data,
                 smooth.args = list(),
                 digits = 2,
                 language  = c("en", "zh"),
+                table.number = NULL,
                 progress = "win",
                 boot.n = 1000,
                 seed = 1234,
@@ -130,8 +132,8 @@ roc <- function(data,
   attr(res, "args") <- args
 
   class(res) <- c("srp.roc", class(res))
-  res <- add_title(res, "Performance metrics")
-  res <- add_note(res, "Abbreviations: AUC, Area under the receiver operating characteristic curve; CI, Confidence interval; PPV, Positive predictive value; NPV, Negative predictive value.")
+  res <- add_title(res, string_title_roc(language, table.number))
+  res <- add_note(res, string_note_roc(language))
 
   res
 
@@ -397,4 +399,23 @@ string_NPV <- function(language){
   switch(language,
          en = "NPV",
          zh = "\u9634\u6027\u9884\u6d4b\u503c")
+}
+
+string_title_roc <- function(language, number = NULL){
+  title <- switch(language,
+                  en = "Performance metrics",
+                  zh = "\u0052\u004f\u0043\u66f2\u7ebf\u8bc4\u4ef7\u6307\u6807")
+  if(!is.null(number)){
+    title <- switch(language,
+                    en = paste(sprintf("Table %d:", number), title, sep = " "),
+                    zh = paste(sprintf("\u8868%d", number),  title, sep = " "))
+  }
+  title
+}
+
+
+string_note_roc <- function(language){
+  switch(language,
+         en = "Abbreviations: AUC, Area under the receiver operating characteristic curve; CI, Confidence interval; PPV, Positive predictive value; NPV, Negative predictive value.",
+         zh = "\u7f29\u7565\u8bcd\uff1a\u0041\u0055\u0043\u002c\u0020\u53d7\u8bd5\u8005\u5de5\u4f5c\u7279\u5f81\u66f2\u7ebf\u003b\u0020\u0043\u0049\u002c\u0020\u53ef\u4fe1\u533a\u95f4\u3002")
 }

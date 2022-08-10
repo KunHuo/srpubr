@@ -893,3 +893,69 @@ do_call <- function(what, ..., envir = parent.frame()){
   do.call(what, args = args, quote = FALSE, envir = envir)
 }
 
+
+#' Data frame Transpose
+#'
+#' @param x a data frame.
+#' @param row.names.col specifies which column is the transposed row name,
+#' default 1. If row.names.col=0, only row and column names are transposed.
+#' @param varname variable name.
+#'
+#' @return a data frame.
+#' @export
+#'
+#' @examples
+#' transpose(mtcars, row.names.col = 0)
+#'
+#' roc.res <- roc(aSAH,
+#'               outcome = "outcome",
+#'               exposure = c("age", "s100b"))
+#' roc.res
+#'
+#' transpose(roc.res)
+transpose <- function(x, row.names.col = 1, varname = NULL){
+
+  title <- attr(x, "title")
+  note  <- attr(x, "note")
+  args  <- attr(x, "args")
+
+  if(row.names.col == 0){
+    x <- rownames_to_column(x, varname = "variable")
+    row.names.col <- 1
+  }
+
+  if(is.null(varname)){
+    varname <- names(x)[row.names.col]
+  }
+
+  o.class <- class(x)
+  row.names <- x[[row.names.col]]
+  x <- x[-row.names.col]
+  col.names <- names(x)
+  x <- t(x)
+  x <- as.data.frame(x)
+  names(x) <- row.names
+  x <- append2(x, col.names, after = 0)
+  names(x)[1] <- varname
+
+  class(x) <- o.class
+  attr(x, "title") <- title
+  attr(x, "note")  <- note
+  attr(x, "args")  <- args
+  x
+}
+
+
+
+fmt_ci_3 <- function(sep = NULL, bracket = c("(", "[")){
+  bracket <- match.arg(bracket)
+  if(bracket == "("){
+    bracket <- c("(", ")")
+  }else{
+    bracket <- c("[", "]")
+  }
+  if(is.null(sep)){
+    sep <- "\u2013"
+  }
+  sprintf("%%s %s%%s%s%%s%s", bracket[1], sep, bracket[2])
+}
