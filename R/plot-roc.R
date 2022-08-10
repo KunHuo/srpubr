@@ -116,6 +116,25 @@ gg_roc <- function(data,
       gg_legend_position(c(1, 0))
     )
 
+  threshold.data <-  lapply(roclist, function(x){
+    rets <- c("threshold", "sensitivity", "specificity")
+    res <- coords <- pROC::coords(x,
+                                  x = "best",
+                                  ret = rets,
+                                  transpose = TRUE)
+    res <- as.data.frame(as.list(res))
+    res$specificity <- 1 - res$specificity
+    res
+  })
+
+  threshold.data <- list_rbind(threshold.data)
+  #print(threshold.data)
+
+  p <- p +
+    ggplot2::geom_point(data = threshold.data,
+                        ggplot2::aes_string(x = "specificity", y = "sensitivity", color = "variable"),
+                        show.legend = FALSE, size = 2.5)
+
   if(!is.null(line.color)){
     p <- p +
       ggplot2::scale_color_manual(values = line.color)
@@ -127,6 +146,7 @@ gg_roc <- function(data,
   }
 
   p
+
 }
 
 
