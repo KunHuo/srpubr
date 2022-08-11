@@ -3,9 +3,8 @@ print_booktabs <- function(data, sep = "__", adj = NULL){
   title <- attr(data, "title")
   note  <- attr(data, "note")
 
-  cat("\n")
-
   if(!is.null(title)){
+    cat("\n")
     cat(title, "\n")
   }
 
@@ -104,8 +103,8 @@ print_booktabs <- function(data, sep = "__", adj = NULL){
 
   if(!is.null(note)){
     cat(note)
+    cat("\n\n")
   }
-  cat("\n\n")
 }
 
 
