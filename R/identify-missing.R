@@ -3,6 +3,9 @@
 #' @param data a data frame.
 #' @param show.all a logical, indicate whether to show all variables, by default,
 #' only show missing variables.
+#' @param decreasing a logical. Should the sort order be increasing or decreasing?
+#' if is NULL, not sorted.
+#' @param detail.type detail type.
 #' @param digits digits for missing percent, defualt 2.
 #' @param language language, typically “en”, or "zh", default "en".
 #' @param table.number table number.
@@ -10,12 +13,20 @@
 #'
 #' @return a data frame.
 #' @export
-identify_missing <- function(data, show.all = FALSE, digits = 2, language = c("en", "zh"), table.number = NULL, ...){
+identify_missing <- function(data,
+                             show.all = FALSE,
+                             decreasing = TRUE,
+                             detail.type = TRUE,
+                             digits = 1,
+                             language = c("en", "zh"),
+                             table.number = NULL,
+                             ...){
 
   language <- match.arg(language)
 
   exec_missing <- function(x){
-    f <- class(x)
+    # f <- data_type(x, language, detail = detail.type)
+    f <- class(x)[1]
     n <- length(x)
     m <- sum(is.na(x))
     p <- sprintf("%s%%", format_digits(m / n * 100, digits = digits))
@@ -39,6 +50,10 @@ identify_missing <- function(data, show.all = FALSE, digits = 2, language = c("e
 
   }else{
     res <- list_rbind(res.miss)
+
+    if(!is.null(decreasing)){
+      res <- res[order(res[["m"]], decreasing = decreasing), ]
+    }
 
     names(res)[names(res) == "variable"] <- string_variable(language)
     names(res)[names(res) == "type"]     <- string_missing_type(language)
@@ -77,13 +92,13 @@ print.srp.miss <- function(x, ...){
 }
 
 
-
 string_missing <- function(language, n.miss.variable, n.total.variable){
   switch(language,
          en = sprintf(", %d missing in %d variables", n.miss.variable, n.total.variable),
          zh = sprintf("\uff0c%d\u4e2a\u53d8\u91cf\u4e2d%d\u4e2a\u6709\u7f3a\u5931\u503c",
                       n.total.variable, n.miss.variable))
 }
+
 
 string_no_missing <- function(language){
   switch(language,
@@ -131,18 +146,3 @@ string_title_missing <- function(language, number = NULL){
   }
   title
 }
-
-
-gg_missing <- function(data, language = 'en'){
-  data.miss <- identify_missing(data, language = language)
-
-  names(data.miss) <- c("variable", "type", "total", "miss.count", "miss.percent")
-
-  ggplot2::ggplot(data = data.miss) +
-    ggplot2::geom_col(ggplot2::aes_string(x = "variable", y = "miss.count", fill = "variable"), width = 0.65, show.legend = FALSE) +
-    gg_theme_sci() +
-    gg_delete_x_title() +
-    gg_rotate_x_text(45) +
-    gg_ybreaks_continuous(0, 100, 20)
-}
-
