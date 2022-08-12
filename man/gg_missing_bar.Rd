@@ -52,3 +52,13 @@ a ggplot.
 \description{
 Plot a bar for missing with ggplot2
 }
+\examples{
+# Basic example
+gg_missing_bar(lung)
+
+# Show all variable
+gg_missing_bar(lung, show.all = TRUE)
+
+# Show missing count
+gg_missing_bar(lung, show.all = TRUE, percent = FALSE)
+}
