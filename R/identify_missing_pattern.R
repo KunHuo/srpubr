@@ -11,6 +11,13 @@
 #'
 #' @return a data frame.
 #' @export
+#'
+#' @examples
+#' # Basic example
+#' identify_missing_pattern(lung)
+#'
+#' # Show all variables
+#' identify_missing_pattern(lung, show.all = TRUE)
 identify_missing_pattern <- function (data,
                                       show.all = FALSE,
                                       decreasing = TRUE,

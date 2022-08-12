@@ -34,3 +34,10 @@ a data frame.
 \description{
 Identify missing pattern
 }
+\examples{
+# Basic example
+identify_missing_pattern(lung)
+
+# Show all variables
+identify_missing_pattern(lung, show.all = TRUE)
+}
