@@ -960,3 +960,26 @@ fmt_ci_3 <- function(sep = NULL, digits = 2, bracket = c("(", "[")){
   sprintf("%%.%df %s%%.%df%s%%.%df%s", digits, bracket[1], digits, sep, digits, bracket[2])
 }
 
+                    
+data_type <- function(x, language = "en", detail = TRUE){
+  type <- class(x)[1]
+
+  if(!detail){
+    if(type == "character" | type == "factor" | type == "ordered"){
+      type <- "categorical"
+    }
+  }
+
+  if(language != "en"){
+    switch(type,
+           numeric = "\u6570\u503C\u53D8\u91CF",
+           character = "\u5B57\u7B26\u53D8\u91CF",
+           logical = "\u903B\u8F91\u53D8\u91CF",
+           factor = "\u56E0\u5B50\u53D8\u91CF",
+           ordered = "\u6709\u5E8F\u56E0\u5B50\u53D8\u91CF",
+           categorical = "\u5206\u7C7B\u53D8\u91CF"
+    )
+  }else{
+    type
+  }
+}
