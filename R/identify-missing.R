@@ -25,8 +25,7 @@ identify_missing <- function(data,
   language <- match.arg(language)
 
   exec_missing <- function(x){
-    # f <- data_type(x, language, detail = detail.type)
-    f <- class(x)[1]
+    f <- data_type(x, language, detail = detail.type)
     n <- length(x)
     m <- sum(is.na(x))
     p <- sprintf("%s%%", format_digits(m / n * 100, digits = digits))
