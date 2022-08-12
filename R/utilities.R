@@ -960,7 +960,7 @@ fmt_ci_3 <- function(sep = NULL, digits = 2, bracket = c("(", "[")){
   sprintf("%%.%df %s%%.%df%s%%.%df%s", digits, bracket[1], digits, sep, digits, bracket[2])
 }
 
-                    
+
 data_type <- function(x, language = "en", detail = TRUE){
   type <- class(x)[1]
 
@@ -968,6 +968,10 @@ data_type <- function(x, language = "en", detail = TRUE){
     if(type == "character" | type == "factor" | type == "ordered"){
       type <- "categorical"
     }
+  }
+
+  if(type == "integer" | type == "numeric"){
+    type <- "numeric"
   }
 
   if(language != "en"){
