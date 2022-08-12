@@ -1,4 +1,4 @@
-identify_missing_pattern <- function (data) {
+identify_missing_pattern <- function (data, show.all = FALSE) {
   if (!(is.matrix(data) || is.data.frame(data))) {
     stop("Data should be a matrix or dataframe")
   }
@@ -36,46 +36,17 @@ identify_missing_pattern <- function (data) {
 
   names(r)[1]       <- "Pattern count"
   names(r)[ncol(r)] <- "Missing count"
-  r
-}
-
-
-gg_missing_pattern <- function(data, show.all = FALSE){
-
-  plotdata <- identify_missing_pattern(data)
 
   if(!show.all){
-    col.index <- sapply(plotdata, function(x){
+    col.index <- sapply(r, function(x){
       if(is.numeric(x)){
         ifelse(x[length(x)] == 0, FALSE, TRUE)
       }else{
         TRUE
       }
     })
-    plotdata <- plotdata[col.index]
+    r <- r[col.index]
   }
 
-  plotdata <- plotdata[, -ncol(plotdata), drop = FALSE]
-  plotdata <- plotdata[-nrow(plotdata), , drop = FALSE]
-
-  pattern.count <- plotdata[[1]]
-
-  plotdata <- plotdata[, -1, drop = FALSE]
-  varnames <- names(plotdata)
-  plotdata <- reshape_long(plotdata)
-
-  plotdata$.id    <- factor(plotdata$.id)
-  plotdata$.name  <- factor(plotdata$.name,  levels = varnames)
-  plotdata$.value <- factor(plotdata$.value, levels = c(0, 1), labels = c("Missing", "No missing"))
-
-  ggplot2::ggplot(plotdata) +
-    ggplot2::geom_tile(ggplot2::aes_string(x = ".name", y = ".id", fill = ".value"), color = "black", size = 0.1) +
-    gg_theme_sci() +
-    ggplot2::theme(axis.line = ggplot2::element_blank(), axis.ticks = ggplot2::element_blank()) +
-    gg_rotate_x_text() +
-    gg_delete_x_title() +
-    gg_delete_y_title() +
-    gg_delete_legend_title() +
-    ggplot2::coord_cartesian(expand = FALSE) +
-    ggplot2::scale_y_discrete(label = pattern.count)
+  r
 }

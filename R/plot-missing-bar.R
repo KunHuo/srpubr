@@ -53,12 +53,12 @@ gg_missing_bar <- function(data,
   if(percent){
     y.string <- "miss.percent"
     y.breaks <- pretty(c(0, max(data.miss[["miss.percent"]])), 5)
-    y.title  <- "Missing percent (%)"
+    y.title  <- paste(string_missing_percent(language), "(%)", sep = " ")
     label    <- "label.miss.percent"
   }else{
     y.string <- "miss.count"
     y.breaks <- pretty(c(0, max(data.miss[["miss.count"]])), 5)
-    y.title  <- "Missing count"
+    y.title  <- string_missing_count(language)
     label    <- "label.miss.count"
   }
 
