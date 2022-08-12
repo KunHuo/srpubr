@@ -1,3 +1,28 @@
+#' Plot missing pattern with ggplot2
+#'
+#' @param data a data frame.
+#' @param show.all a logical, indicate whether to show all variables, by default,
+#' only show missing variables.
+#' @param decreasing a logical. Should the sort order be increasing or decreasing?
+#' if is NULL, not sorted.
+#' @param language language, typically “en”, or "zh", default "en".
+#' @param font.family font family.
+#' @param font.size font size.
+#' @param color fill color, must have two values, the first for missing, the second for observed.
+#' @param ... further arguments pass to [gg_theme_sci] function.
+#'
+#' @return a ggplot.
+#' @export
+#'
+#' @examples
+#' # Basic example
+#' gg_missing_pattern(lung)
+#'
+#' # show all variables
+#' gg_missing_pattern(lung, show.all = TRUE)
+#'
+#' # Specify the color
+#' gg_missing_pattern(lung, show.all = TRUE, color = c("#E85827", "#81D8D0"))
 gg_missing_pattern <- function(data,
                                show.all = FALSE,
                                decreasing = TRUE,
@@ -44,7 +69,7 @@ gg_missing_pattern <- function(data,
     gg_theme_sci(legend.key.size = 0.8, font.family = font.family, font.size = font.size) +
     ggplot2::theme(axis.line   = ggplot2::element_blank(),
                    axis.ticks  = ggplot2::element_blank(),
-                   plot.margin = ggplot2::unit(c(0.6, 0.4, 0.4, 0.4), "cm")) +
+                   plot.margin = ggplot2::unit(c(0.6, 0.4, 0.4, 0.4), "cm"), ...) +
     gg_rotate_x_text() +
     gg_delete_x_title() +
     gg_delete_y_title() +
