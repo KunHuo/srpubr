@@ -6,7 +6,7 @@
 #' @param decreasing a logical. Should the sort order be increasing or decreasing?
 #' if is NULL, not sorted.
 #' @param detail.type detail type.
-#' @param digits digits for missing percent, defualt 2.
+#' @param digits digits for missing percent, defualt 1.
 #' @param language language, typically “en”, or "zh", default "en".
 #' @param table.number table number.
 #' @param ... unused arguments.
@@ -77,7 +77,7 @@ identify_missing <- function(data,
     title <-  paste(title1, title2, sep = "")
 
     res <-  add_title(res, title)
-    res <- tibble::as_tibble(res)
+    res <-  tibble::as_tibble(res)
 
     class(res) <- c("srp.miss", class(res))
 
@@ -150,8 +150,8 @@ string_title_missing <- function(language, number = NULL){
                   zh = "\u7f3a\u5931\u503c\u5206\u6790")
   if(!is.null(number)){
     title <- switch(language,
-                    en = paste(sprintf("Table %d:", number), title, sep = " "),
-                    zh = paste(sprintf("\u8868%d", number),  title, sep = " "))
+                    en = paste(sprintf("Table %d:", number), title, sep = "  "),
+                    zh = paste(sprintf("\u8868%d", number),  title, sep = "  "))
   }
   title
 }

@@ -9,7 +9,7 @@ reshape_long(
   cols = names(data),
   names.to = ".name",
   values.to = ".value",
-  add.id.col = TRUE,
+  add.id.col = FALSE,
   id.name = ".id",
   ...
 )
@@ -41,10 +41,10 @@ Reshape data from wide to long
 }
 \examples{
 # Basic example
-reshape_long(mtcars, add.id.col = FALSE)
+reshape_long(mtcars)
 
-# Do not add id column.
-reshape_long(mtcars, add.id.col = FALSE)
+# Add id column.
+reshape_long(mtcars, add.id.col = TRUE)
 
 # Reshape the specified variable.
 reshape_long(mtcars, cols = c("mpg", "cyl", "disp"))
