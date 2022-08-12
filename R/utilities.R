@@ -946,7 +946,6 @@ transpose <- function(x, row.names.col = 1, varname = NULL){
 }
 
 
-
 fmt_ci_3 <- function(sep = NULL, digits = 2, bracket = c("(", "[")){
   bracket <- match.arg(bracket)
   if(bracket == "("){
@@ -986,4 +985,89 @@ data_type <- function(x, language = "en", detail = TRUE){
   }else{
     type
   }
+}
+
+
+#' Reshape data from wide to long
+#'
+#' @param data a data frame to reshape.
+#' @param cols columns to reshape into longer format.
+#' @param names.to a character vector specifying the new column or columns to
+#' create from the information stored in the column names of data specified by cols.
+#' @param values.to a string specifying the name of the column to create from
+#' the data stored in cell values.
+#' @param add.id.col a logical, indicate whether add a id column, which dentify
+#' multiple records from the same group/individual.
+#' @param id.name names of one or more variables in long format that identify
+#' multiple records from the same group/individual.
+#' @param ... additional arguments passed on to methods.
+#'
+#' @return a data frame.
+#' @export
+#'
+#' @examples
+#' # Basic example
+#' reshape_long(mtcars, add.id.col = FALSE)
+#'
+#' # Do not add id column.
+#' reshape_long(mtcars, add.id.col = FALSE)
+#'
+#' # Reshape the specified variable.
+#' reshape_long(mtcars, cols = c("mpg", "cyl", "disp"))
+reshape_long <- function(data,
+                         cols = names(data),
+                         names.to = ".name",
+                         values.to = ".value",
+                         add.id.col = TRUE,
+                         id.name = ".id",
+                         ...){
+
+  if(is.numeric(cols)){
+    cols <- names(data)[cols]
+  }
+
+  cols <- select_col_names(data, cols)
+
+  res <- reshape(data,
+                 direction = "long",
+                 idvar = id.name,
+                 times   = cols,
+                 timevar = names.to,
+                 v.names = values.to,
+                 varying = list(cols))
+  if(add.id.col){
+    res <- relocate(res, variables = id.name, before = 1)
+  }else{
+    res <- res[, -which(names(res) == id.name), drop = FALSE]
+  }
+  tibble::as_tibble(res)
+}
+
+
+select_col_index <- function(data, ...){
+  varnames <- list(...)
+  res <- lapply(varnames, function(x){
+    if(is.numeric(x)){
+      x
+    }else{
+      sapply(x, function(i){
+        if(regex_detect(i, pattern = ":", fixed = TRUE)){
+          st <- regex_split(i, pattern = ":", fixed = TRUE)[[1]]
+          start <- which(names(data) == st[1])
+          end   <- which(names(data) == st[2])
+          start:end
+        }else{
+          which(names(data) == i)
+        }
+      })
+    }
+  })
+  res <- unique(unlist(res))
+  names(res) <- names(data)[res]
+  res
+}
+
+
+select_col_names <- function(data, ...){
+  names(data)[select_col_index(data, ...)]
 }
