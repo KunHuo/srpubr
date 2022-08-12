@@ -1,6 +1,26 @@
-gg_missing_pattern <- function(data, show.all = FALSE){
+gg_missing_pattern <- function(data,
+                               show.all = FALSE,
+                               decreasing = TRUE,
+                               language  = c("en", "zh"),
+                               font.family = "serif",
+                               font.size = 12,
+                               color = NULL,
+                               ...){
 
-  plotdata <- identify_missing_pattern(data)
+  language <- match.arg(language)
+
+  if(language == "zh"){
+    sysfonts::font_add("simsun", "simsun.ttc")
+    font.family <- "simsun"
+  }else{
+    font.family <- font.family
+  }
+
+  plotdata <- identify_missing_pattern(data, show.all = show.all, decreasing = decreasing)
+
+  if(is.null(plotdata)){
+    return(invisible(NULL))
+  }
 
   plotdata <- plotdata[, -ncol(plotdata), drop = FALSE]
   plotdata <- plotdata[-nrow(plotdata), , drop = FALSE]
@@ -9,16 +29,20 @@ gg_missing_pattern <- function(data, show.all = FALSE){
 
   plotdata <- plotdata[, -1, drop = FALSE]
   varnames <- names(plotdata)
+
   plotdata <- reshape_long(plotdata, add.id.col = TRUE)
+
+  label.missing  <- ifelse(language == "en", "Missing",  "\u7f3a\u5931")
+  label.observed <- ifelse(language == "en", "Observed", "\u975e\u7f3a\u5931")
 
   plotdata$.id    <- factor(plotdata$.id)
   plotdata$.name  <- factor(plotdata$.name,  levels = varnames)
-  plotdata$.value <- factor(plotdata$.value, levels = c(0, 1), labels = c("Missing", "No missing"))
+  plotdata$.value <- factor(plotdata$.value, levels = c(0, 1), labels = c(label.missing, label.observed))
 
-  ggplot2::ggplot(plotdata) +
+  p <- ggplot2::ggplot(plotdata) +
     ggplot2::geom_tile(ggplot2::aes_string(x = ".name", y = ".id", fill = ".value"), color = "black", size = 0.1) +
-    gg_theme_sci(legend.key.size = 0.8) +
-    ggplot2::theme(axis.line  = ggplot2::element_blank(),
+    gg_theme_sci(legend.key.size = 0.8, font.family = font.family, font.size = font.size) +
+    ggplot2::theme(axis.line   = ggplot2::element_blank(),
                    axis.ticks  = ggplot2::element_blank(),
                    plot.margin = ggplot2::unit(c(0.6, 0.4, 0.4, 0.4), "cm")) +
     gg_rotate_x_text() +
@@ -28,4 +52,12 @@ gg_missing_pattern <- function(data, show.all = FALSE){
     ggplot2::coord_cartesian(expand = FALSE) +
     ggplot2::scale_y_discrete(label = pattern.count) +
     gg_legend_position("top")
+
+  if(!is.null(color)){
+    stopifnot(length(color) == 2L)
+    p <- p +
+      ggplot2::scale_fill_manual(values = color)
+  }
+
+  p
 }

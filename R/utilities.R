@@ -1022,6 +1022,8 @@ reshape_long <- function(data,
                          id.name = ".id",
                          ...){
 
+  class(data) <- "data.frame"
+
   if(is.numeric(cols)){
     cols <- names(data)[cols]
   }
@@ -1031,10 +1033,12 @@ reshape_long <- function(data,
   res <- stats::reshape(data,
                  direction = "long",
                  idvar = id.name,
+                 ids = as.character(1:nrow(data)),
                  times   = cols,
                  timevar = names.to,
                  v.names = values.to,
                  varying = list(cols))
+
   if(add.id.col){
     res <- relocate(res, variables = id.name, before = 1)
   }else{
