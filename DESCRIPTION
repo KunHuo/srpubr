@@ -17,7 +17,6 @@ Imports:
     officer,
     pROC,
     R.utils,
-    showtext,
     stats,
     sysfonts,
     tibble

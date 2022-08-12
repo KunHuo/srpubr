@@ -40,3 +40,13 @@ a data frame.
 \description{
 Missing value analysis
 }
+\examples{
+# Basic example
+identify_missing(lung)
+
+# Show all variable
+identify_missing(lung, show.all = TRUE)
+
+# increasing by missing count
+identify_missing(lung, show.all = TRUE, decreasing = FALSE)
+}

@@ -74,7 +74,7 @@ gg_missing_bar <- function(data,
     ggplot2::geom_text(ggplot2::aes_string(x = "variable", y = y.string, label = label),
                        vjust = -0.75, family = font.family, size = font.size / 2.848) +
     gg_theme_sci(legend.key.size = 0.8, font.family = font.family, font.size = font.size, ...) +
-    ggplot2::theme( plot.margin = ggplot2::unit(c(0.8, 1.0, 0.4, 0.4), "cm")) +
+    ggplot2::theme( plot.margin = ggplot2::unit(c(0.8, 0.4, 0.4, 0.4), "cm")) +
     gg_delete_x_title() +
     gg_rotate_x_text(45) +
     gg_ylab(y.title) +
