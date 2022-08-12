@@ -7,7 +7,7 @@
 gg_save(
   plot,
   path,
-  width = 8,
+  width = 8.3,
   height = width/8 * 7,
   units = "cm",
   language = "en",
@@ -19,7 +19,7 @@ gg_save(
 
 \item{path}{Path to save plot to (combined with file name).}
 
-\item{width}{Width, default 8.}
+\item{width}{Width, default 8.3.}
 
 \item{height}{Height.}
 

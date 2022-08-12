@@ -1028,7 +1028,7 @@ reshape_long <- function(data,
 
   cols <- select_col_names(data, cols)
 
-  res <- reshape(data,
+  res <- stats::reshape(data,
                  direction = "long",
                  idvar = id.name,
                  times   = cols,

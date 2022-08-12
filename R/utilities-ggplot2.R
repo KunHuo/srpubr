@@ -388,7 +388,7 @@ gg_ybreaks_continuous <- function(min, max, by, expand = TRUE){
 #'
 #' @param plot Plot to save, defaults to last plot displayed.
 #' @param path Path to save plot to (combined with file name).
-#' @param width Width, default 8.
+#' @param width Width, default 8.3.
 #' @param height Height.
 #' @param units Units, default cm.
 #' @param language language.
@@ -397,7 +397,7 @@ gg_ybreaks_continuous <- function(min, max, by, expand = TRUE){
 #' @export
 gg_save <- function(plot,
                     path,
-                    width = 8,
+                    width = 8.3,
                     height = width / 8 * 7,
                     units = "cm",
                     language = "en",
