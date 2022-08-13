@@ -32,7 +32,7 @@ if is NULL, not sorted.}
 
 \item{detail.type}{detail type.}
 
-\item{digits}{digits for missing percent, defualt 2.}
+\item{digits}{digits for missing percent, default 1.}
 
 \item{language}{language, typically “en”, or "zh", default "en".}
 

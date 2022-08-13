@@ -1,3 +1,39 @@
+#' Plots for missing with ggplot2
+#'
+#' @param data a data frame.
+#' @param percent.bar a logical for bar, show percentage or frequency.
+#' @param percent.miss a logical for missing plot, show percentage or frequency.
+#' @param show.all a logical, indicate whether to show all variables, by default,
+#' only show missing variables.
+#' @param decreasing a logical. Should the sort order be increasing or decreasing?
+#' if is NULL, not sorted.
+#' @param detail.type detail type.
+#' @param add.var.miss a logical, indicate whether to show missing count of each variable.
+#' @param digits digits for missing percent, default 1.
+#' @param language language, typically “en”, or "zh", default "en".
+#' @param bar.color color for bar plot.
+#' @param bar.width width for bar.
+#' @param miss.color color for missing plot.
+#' @param font.family font family.
+#' @param font.size font size.
+#' @param tag.levels a character vector defining the enumeration format to use at
+#' each level.  It can also be a list containing character vectors defining
+#' arbitrary tag sequences. If any element in the list is a scalar and one of
+#' 'a', 'A', '(a)', '(A)', '[a]', '[A]', '(1)'  or '[1]', this level will be
+#' expanded to the expected sequence.
+#' @param plot.width the relative widths and heights of each column and row in
+#' the grid. Will get repeated to match the dimensions of the grid.
+#' @param ... further arguments pass to [gg_theme_sci] function.
+#'
+#' @return a ggplot.
+#' @export
+#'
+#' @examples
+#' # Basic
+#' gg_missing(lung)
+#'
+#' # set tag
+#' gg_missing(lung, tag.levels = c("A: Missing bar", "B: Missing pattern"))
 gg_missing <- function(data,
                        percent.bar = TRUE,
                        percent.miss = FALSE,
@@ -13,7 +49,10 @@ gg_missing <- function(data,
                        font.family = "serif",
                        font.size = 12,
                        tag.levels = "A",
+                       plot.width  = c(0.5, 0.5),
                        ...){
+
+  language <- match.arg(language)
 
   A <- gg_missing_bar(data = data,
                       percent = percent.bar,
@@ -49,5 +88,5 @@ gg_missing <- function(data,
   A <- A + gg_tags(tag.levels[1])
   B <- B + gg_tags(tag.levels[2])
 
-  patchwork::wrap_plots(A, B)
+  patchwork::wrap_plots(A, B, widths = plot.width)
 }
