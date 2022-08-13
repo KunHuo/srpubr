@@ -61,7 +61,7 @@ roc <- function(data,
                 smooth.args = list(),
                 digits = 2,
                 percent = FALSE,
-                language  = c("en", "zh"),
+                language  = NULL,
                 table.number = NULL,
                 progress = "win",
                 boot.n = 1000,
@@ -70,12 +70,14 @@ roc <- function(data,
 
 
   ci.method  <- match.arg(ci.method)
-  language   <- match.arg(language)
+  language   <- get_global_languange(language, default = "en")
   ci.branket <- match.arg(ci.branket)
 
   if(ci.method == "bootstrap"){
     smooth <- FALSE
   }
+
+  exposure <- select_col_names(data, exposure)
 
   roclist <- .roc(data = data,
                   outcome  = outcome,

@@ -11,9 +11,9 @@ gg_missing_pattern(
   decreasing = TRUE,
   add.var.miss = TRUE,
   digits = 1,
-  language = c("en", "zh"),
-  font.family = "serif",
-  font.size = 12,
+  language = NULL,
+  font.family = NULL,
+  font.size = NULL,
   color = NULL,
   ...
 )
@@ -35,9 +35,9 @@ if is NULL, not sorted.}
 
 \item{language}{language, typically “en”, or "zh", default "en".}
 
-\item{font.family}{font family.}
+\item{font.family}{font family, default 'serif'.}
 
-\item{font.size}{font size.}
+\item{font.size}{font size, default 12.}
 
 \item{color}{fill color, must have two values, the first for missing, the second for observed.}
 

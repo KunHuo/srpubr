@@ -10,7 +10,7 @@ identify_missing(
   decreasing = TRUE,
   detail.type = TRUE,
   digits = 1,
-  language = c("en", "zh"),
+  language = NULL,
   table.number = NULL,
   ...
 )

@@ -9,8 +9,8 @@
 #' @param add.var.miss  a logical, indicate whether to show missing count of each variable.
 #' @param digits digits for missing percent, defualt 2.
 #' @param language language, typically “en”, or "zh", default "en".
-#' @param font.family font family.
-#' @param font.size font size.
+#' @param font.family font family, default 'serif'.
+#' @param font.size font size, default 12.
 #' @param color fill color, must have two values, the first for missing, the second for observed.
 #' @param ... further arguments pass to [gg_theme_sci] function.
 #'
@@ -32,13 +32,16 @@ gg_missing_pattern <- function(data,
                                decreasing = TRUE,
                                add.var.miss = TRUE,
                                digits = 1,
-                               language  = c("en", "zh"),
-                               font.family = "serif",
-                               font.size = 12,
+                               language  = NULL,
+                               font.family = NULL,
+                               font.size = NULL,
                                color = NULL,
                                ...){
 
-  language <- match.arg(language)
+  language    <- get_global_languange(language, default = "en")
+  font.family <- get_global_family(font.family, default = "serif")
+  font.size   <- get_global_fontsize(font.size, default = 12)
+  color       <- get_global_palette(color)
 
   if(language == "zh"){
     sysfonts::font_add("simsun", "simsun.ttc")
@@ -103,7 +106,7 @@ gg_missing_pattern <- function(data,
     gg_legend_position("top")
 
   if(!is.null(color)){
-    stopifnot(length(color) == 2L)
+    stopifnot(length(color) >= 2L)
     p <- p +
       ggplot2::scale_fill_manual(values = color)
   }

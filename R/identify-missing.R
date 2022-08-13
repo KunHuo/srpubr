@@ -28,11 +28,11 @@ identify_missing <- function(data,
                              decreasing = TRUE,
                              detail.type = TRUE,
                              digits = 1,
-                             language = c("en", "zh"),
+                             language = NULL,
                              table.number = NULL,
                              ...){
 
-  language <- match.arg(language)
+  language <- get_global_languange(language, default = "en")
 
   exec_missing <- function(x){
     f <- data_type(x, language, detail = detail.type)

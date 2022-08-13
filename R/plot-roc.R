@@ -20,12 +20,13 @@
 #' @param auc.ci.method the method to use, either “delong” or “bootstrap”. The
 #' first letter is sufficient. If omitted, the appropriate method is selected as
 #' explained in details.
+#' @param show.cutoff a logical, indicating whether to show cutoff.
 #' @param line.size line size.
 #' @param line.color line color.
 #' @param line.type line type.
 #' @param language language, typically “en”, or "zh", default "en".
-#' @param font.family font family.
-#' @param font.size font size.
+#' @param font.family font family, default 'serif'.
+#' @param font.size font size, default 12.
 #' @param progress the name of progress bar to display. Typically “none”, “win”,
 #' “tk” or “text”.
 #' @param boot.n the number of bootstrap replicates, default 1000.
@@ -34,6 +35,23 @@
 #'
 #' @return a ggplot.
 #' @export
+#'
+#' @examples
+#' # Basic example
+#' gg_roc(aSAH,
+#'        outcome  = "outcome",
+#'        exposure = c("age", "s100b"))
+#'
+#' # Combine with logistic regression.
+#' gg_roc(aSAH,
+#'        outcome  = "outcome",
+#'        exposure = c("age", "s100b"),
+#'        combine  = TRUE)
+#'
+#' gg_roc(aSAH,
+#'        outcome  = "outcome",
+#'        exposure = c("age:ndka"),
+#'        combine  = TRUE)
 gg_roc <- function(data,
                    outcome,
                    exposure,
@@ -46,12 +64,13 @@ gg_roc <- function(data,
                    auc.ci = FALSE,
                    auc.digits = 2,
                    auc.ci.method = c("delong", "bootstrap"),
+                   show.cutoff = TRUE,
                    line.size = 0.5,
                    line.color = NULL,
                    line.type = NULL,
-                   language  = c("en", "zh"),
-                   font.family = "serif",
-                   font.size = 12,
+                   language  = NULL,
+                   font.family = NULL,
+                   font.size = NULL,
                    progress = "win",
                    boot.n = 1000,
                    seed = 1234,
@@ -60,7 +79,13 @@ gg_roc <- function(data,
   set.seed(seed)
 
   auc.ci.method <- match.arg(auc.ci.method)
-  language      <- match.arg(language)
+
+  language    <- get_global_languange(language, default = "en")
+  font.family <- get_global_family(font.family, default = "serif")
+  font.size   <- get_global_fontsize(font.size, default = 12)
+  line.color  <- get_global_palette(line.color)
+
+  exposure <- select_col_names(data, exposure)
 
   roclist <- .roc(data = data,
                  outcome = outcome,
@@ -116,24 +141,25 @@ gg_roc <- function(data,
       gg_legend_position(c(1, 0))
     )
 
-  threshold.data <-  lapply(roclist, function(x){
-    rets <- c("threshold", "sensitivity", "specificity")
-    res <- coords <- pROC::coords(x,
-                                  x = "best",
-                                  ret = rets,
-                                  transpose = TRUE)
-    res <- as.data.frame(as.list(res))
-    res$specificity <- 1 - res$specificity
-    res
-  })
+  if(show.cutoff){
+    threshold.data <-  lapply(roclist, function(x){
+      rets <- c("threshold", "sensitivity", "specificity")
+      res <- coords <- pROC::coords(x,
+                                    x = "best",
+                                    ret = rets,
+                                    transpose = TRUE)
+      res <- as.data.frame(as.list(res))
+      res$specificity <- 1 - res$specificity
+      res
+    })
 
-  threshold.data <- list_rbind(threshold.data)
-  #print(threshold.data)
+    threshold.data <- list_rbind(threshold.data)
 
-  p <- p +
-    ggplot2::geom_point(data = threshold.data,
-                        ggplot2::aes_string(x = "specificity", y = "sensitivity", color = "variable"),
-                        show.legend = FALSE, size = 2.5)
+    p <- p +
+      ggplot2::geom_point(data = threshold.data,
+                          ggplot2::aes_string(x = "specificity", y = "sensitivity", color = "variable"),
+                          show.legend = FALSE, size = 2.5)
+  }
 
   if(!is.null(line.color)){
     p <- p +
@@ -169,7 +195,7 @@ gg_roc <- function(data,
   set.seed(seed)
   if(auc.ci){
     res <- pROC::ci.auc(x, method = method, boot.n = boot.n, progress = progress)
-    sprintf("AUC = %s, 95%% CI: %s-%s",
+    sprintf("AUC = %s, 95%% CI: %s\u2013%s",
             format_digits(res[[2]], digits),
             format_digits(res[[1]], digits),
             format_digits(res[[3]], digits))

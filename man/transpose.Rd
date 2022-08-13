@@ -2,7 +2,7 @@
 % Please edit documentation in R/utilities.R
 \name{transpose}
 \alias{transpose}
-\title{Data frame Transpose}
+\title{Data frame transpose}
 \usage{
 transpose(x, row.names.col = 1, varname = NULL)
 }
@@ -18,7 +18,7 @@ default 1. If row.names.col=0, only row and column names are transposed.}
 a data frame.
 }
 \description{
-Data frame Transpose
+Data frame transpose
 }
 \examples{
 transpose(mtcars, row.names.col = 0)

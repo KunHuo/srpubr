@@ -17,12 +17,13 @@ gg_roc(
   auc.ci = FALSE,
   auc.digits = 2,
   auc.ci.method = c("delong", "bootstrap"),
+  show.cutoff = TRUE,
   line.size = 0.5,
   line.color = NULL,
   line.type = NULL,
-  language = c("en", "zh"),
-  font.family = "serif",
-  font.size = 12,
+  language = NULL,
+  font.family = NULL,
+  font.size = NULL,
   progress = "win",
   boot.n = 1000,
   seed = 1234,
@@ -62,6 +63,8 @@ joint predictions.}
 first letter is sufficient. If omitted, the appropriate method is selected as
 explained in details.}
 
+\item{show.cutoff}{a logical, indicating whether to show cutoff.}
+
 \item{line.size}{line size.}
 
 \item{line.color}{line color.}
@@ -70,9 +73,9 @@ explained in details.}
 
 \item{language}{language, typically “en”, or "zh", default "en".}
 
-\item{font.family}{font family.}
+\item{font.family}{font family, default 'serif'.}
 
-\item{font.size}{font size.}
+\item{font.size}{font size, default 12.}
 
 \item{progress}{the name of progress bar to display. Typically “none”, “win”,
 “tk” or “text”.}
@@ -88,4 +91,21 @@ a ggplot.
 }
 \description{
 Plot a ROC curve with ggplot2
+}
+\examples{
+# Basic example
+gg_roc(aSAH,
+       outcome  = "outcome",
+       exposure = c("age", "s100b"))
+
+# Combine with logistic regression.
+gg_roc(aSAH,
+       outcome  = "outcome",
+       exposure = c("age", "s100b"),
+       combine  = TRUE)
+
+gg_roc(aSAH,
+       outcome  = "outcome",
+       exposure = c("age:ndka"),
+       combine  = TRUE)
 }

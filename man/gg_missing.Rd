@@ -13,12 +13,12 @@ gg_missing(
   detail.type = TRUE,
   add.var.miss = TRUE,
   digits = 1,
-  language = c("en", "zh"),
+  language = NULL,
   bar.color = NULL,
   bar.width = 0.65,
   miss.color = NULL,
-  font.family = "serif",
-  font.size = 12,
+  font.family = NULL,
+  font.size = NULL,
   tag.levels = "A",
   plot.width = c(0.5, 0.5),
   ...
@@ -51,14 +51,14 @@ if is NULL, not sorted.}
 
 \item{miss.color}{color for missing plot.}
 
-\item{font.family}{font family.}
+\item{font.family}{font family, default 'serif'.}
 
-\item{font.size}{font size.}
+\item{font.size}{font size, default 12.}
 
 \item{tag.levels}{a character vector defining the enumeration format to use at
 each level.  It can also be a list containing character vectors defining
 arbitrary tag sequences. If any element in the list is a scalar and one of
-'a', 'A', '(a)', '(A)', '\link{a}', '\link[=a]{A}', '(1)'  or '\link{1}', this level will be
+'a', 'A', '(a)', '(A)', '[a]', '[A]', '(1)'  or '[1]', this level will be
 expanded to the expected sequence.}
 
 \item{plot.width}{the relative widths and heights of each column and row in

@@ -14,12 +14,12 @@
 #' @param bar.color color for bar plot.
 #' @param bar.width width for bar.
 #' @param miss.color color for missing plot.
-#' @param font.family font family.
-#' @param font.size font size.
+#' @param font.family font family, default 'serif'.
+#' @param font.size font size, default 12.
 #' @param tag.levels a character vector defining the enumeration format to use at
 #' each level.  It can also be a list containing character vectors defining
 #' arbitrary tag sequences. If any element in the list is a scalar and one of
-#' 'a', 'A', '(a)', '(A)', '[a]', '[A]', '(1)'  or '[1]', this level will be
+#' 'a', 'A', '(a)', '(A)', '\[a\]', '\[A\]', '(1)'  or '\[1\]', this level will be
 #' expanded to the expected sequence.
 #' @param plot.width the relative widths and heights of each column and row in
 #' the grid. Will get repeated to match the dimensions of the grid.
@@ -42,17 +42,22 @@ gg_missing <- function(data,
                        detail.type = TRUE,
                        add.var.miss = TRUE,
                        digits = 1,
-                       language = c("en", "zh"),
+                       language = NULL,
                        bar.color = NULL,
                        bar.width = 0.65,
                        miss.color = NULL,
-                       font.family = "serif",
-                       font.size = 12,
+                       font.family = NULL,
+                       font.size = NULL,
                        tag.levels = "A",
                        plot.width  = c(0.5, 0.5),
                        ...){
 
-  language <- match.arg(language)
+  language    <- get_global_languange(language, default = "en")
+  font.family <- get_global_family(font.family, default = "serif")
+  font.size   <- get_global_fontsize(font.size, default = 12)
+
+  bar.color   <- get_global_palette(bar.color)
+  miss.color  <- get_global_palette(miss.color)
 
   A <- gg_missing_bar(data = data,
                       percent = percent.bar,

@@ -894,7 +894,7 @@ do_call <- function(what, ..., envir = parent.frame()){
 }
 
 
-#' Data frame Transpose
+#' Data frame transpose
 #'
 #' @param x a data frame.
 #' @param row.names.col specifies which column is the transposed row name,
@@ -1111,4 +1111,87 @@ tag_levels <- function(tags, n = 1){
     }
     tags
   }
+}
+
+
+
+#' Set global languange
+#'
+#' @param language lauage
+#'
+#' @export
+global_option_languange <- function(language = NULL){
+  options(language = language)
+}
+
+
+get_global_languange <- function(language = NULL, default = "en"){
+  if(is.null(language)){
+    language <-  getOption("language", default = default)
+  }
+  language
+}
+
+
+#' Set global family
+#'
+#' @param family family
+#'
+#' @export
+global_option_family <- function(family = NULL){
+  options(family = family)
+}
+
+
+get_global_family <- function(family = NULL, default = "serif"){
+  if(is.null(family)){
+    family <-  getOption("family", default = default)
+  }
+  family
+}
+
+#' Set global font size
+#'
+#' @param font.size font.size
+#'
+#' @export
+global_option_fontsize <- function(font.size = NULL){
+  options(font.size = font.size)
+}
+
+
+get_global_fontsize <- function(font.size = NULL, default = 12){
+  if(is.null(font.size)){
+    font.size <- getOption("font.size", default = default)
+  }
+  font.size
+}
+
+
+#' Set global palette
+#'
+#' @param palette palette
+#'
+#' @export
+global_option_palette <- function(palette = NULL){
+  options(palette = palette)
+}
+
+
+get_global_palette <- function(palette = NULL, default = NULL){
+  if(is.null(palette)){
+    palette <-  getOption("palette", default = NULL)
+  }
+  palette
+}
+
+
+#' Reset global options
+#'
+#' @export
+global_option_reset <- function(){
+  global_option_languange()
+  global_option_fontsize()
+  global_option_family()
+  global_option_palette()
 }

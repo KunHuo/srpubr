@@ -20,7 +20,7 @@ roc(
   smooth.args = list(),
   digits = 2,
   percent = FALSE,
-  language = c("en", "zh"),
+  language = NULL,
   table.number = NULL,
   progress = "win",
   boot.n = 1000,

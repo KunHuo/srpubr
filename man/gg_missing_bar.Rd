@@ -11,11 +11,11 @@ gg_missing_bar(
   decreasing = TRUE,
   detail.type = TRUE,
   digits = 1,
-  language = c("en", "zh"),
+  language = NULL,
   bar.color = NULL,
   bar.width = 0.65,
-  font.family = "serif",
-  font.size = 12,
+  font.family = NULL,
+  font.size = NULL,
   ...
 )
 }
@@ -40,9 +40,9 @@ if is NULL, not sorted.}
 
 \item{bar.width}{width for bar.}
 
-\item{font.family}{font family.}
+\item{font.family}{font family, default 'serif'.}
 
-\item{font.size}{font size.}
+\item{font.size}{font size, default 12.}
 
 \item{...}{further arguments pass to \link{gg_theme_sci} function.}
 }

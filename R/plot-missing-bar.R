@@ -11,8 +11,8 @@
 #' @param language language, typically “en”, or "zh", default "en".
 #' @param bar.color color for bar.
 #' @param bar.width width for bar.
-#' @param font.family font family.
-#' @param font.size font size.
+#' @param font.family font family, default 'serif'.
+#' @param font.size font size, default 12.
 #' @param ... further arguments pass to [gg_theme_sci] function.
 #'
 #' @return a ggplot.
@@ -33,14 +33,17 @@ gg_missing_bar <- function(data,
                        decreasing = TRUE,
                        detail.type = TRUE,
                        digits = 1,
-                       language = c("en", "zh"),
+                       language = NULL,
                        bar.color = NULL,
                        bar.width = 0.65,
-                       font.family = "serif",
-                       font.size = 12,
+                       font.family = NULL,
+                       font.size = NULL,
                        ...){
 
-  language <- match.arg(language)
+  language    <- get_global_languange(language, default = "en")
+  font.family <- get_global_family(font.family, default = "serif")
+  font.size   <- get_global_fontsize(font.size, default = 12)
+  bar.color   <- get_global_palette(bar.color)
 
   data.miss <- identify_missing(data,
                                 show.all = show.all,

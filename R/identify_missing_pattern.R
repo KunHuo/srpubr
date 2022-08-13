@@ -21,11 +21,11 @@
 identify_missing_pattern <- function (data,
                                       show.all = FALSE,
                                       decreasing = TRUE,
-                                      language = c("en", "zh"),
+                                      language = NULL,
                                       table.number = NULL,
                                       ...) {
 
-  language <- match.arg(language)
+  language <- get_global_languange(language, default = "en")
 
   if (!(is.matrix(data) || is.data.frame(data))) {
     stop("Data should be a matrix or dataframe")

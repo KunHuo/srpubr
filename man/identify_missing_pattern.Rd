@@ -8,7 +8,7 @@ identify_missing_pattern(
   data,
   show.all = FALSE,
   decreasing = TRUE,
-  language = c("en", "zh"),
+  language = NULL,
   table.number = NULL,
   ...
 )
