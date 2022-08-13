@@ -6,8 +6,11 @@
 \usage{
 gg_missing_pattern(
   data,
+  percent = FALSE,
   show.all = FALSE,
   decreasing = TRUE,
+  add.var.miss = TRUE,
+  digits = 1,
   language = c("en", "zh"),
   font.family = "serif",
   font.size = 12,
@@ -18,11 +21,17 @@ gg_missing_pattern(
 \arguments{
 \item{data}{a data frame.}
 
+\item{percent}{a logical, show percentage or frequency.}
+
 \item{show.all}{a logical, indicate whether to show all variables, by default,
 only show missing variables.}
 
 \item{decreasing}{a logical. Should the sort order be increasing or decreasing?
 if is NULL, not sorted.}
+
+\item{add.var.miss}{a logical, indicate whether to show missing count of each variable.}
+
+\item{digits}{digits for missing percent, defualt 2.}
 
 \item{language}{language, typically “en”, or "zh", default "en".}
 
