@@ -45,6 +45,13 @@ gg_missing_bar <- function(data,
   font.size   <- get_global_fontsize(font.size, default = 12)
   bar.color   <- get_global_palette(bar.color)
 
+  if(language == "zh"){
+    sysfonts::font_add("simsun", "simsun.ttc")
+    font.family <- "simsun"
+  }else{
+    font.family <- font.family
+  }
+
   data.miss <- identify_missing(data,
                                 show.all = show.all,
                                 decreasing = decreasing,
@@ -73,13 +80,6 @@ gg_missing_bar <- function(data,
     y.breaks <- pretty(c(0, max(data.miss[["miss.count"]])), 5)
     y.title  <- string_missing_count(language)
     label    <- "label.miss.count"
-  }
-
-  if(language == "zh"){
-    sysfonts::font_add("simsun", "simsun.ttc")
-    font.family <- "simsun"
-  }else{
-    font.family <- font.family
   }
 
   p <- ggplot2::ggplot(data = data.miss) +
