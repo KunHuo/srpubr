@@ -963,24 +963,26 @@ fmt_ci_3 <- function(sep = NULL, digits = 2, bracket = c("(", "[")){
 data_type <- function(x, language = "en", detail = TRUE){
   type <- class(x)[1]
 
+  type <- str_capitalize(type)
+
   if(!detail){
-    if(type == "character" | type == "factor" | type == "ordered"){
-      type <- "categorical"
+    if(type == "Character" | type == "Factor" | type == "Ordered"){
+      type <- "Categorical"
     }
   }
 
-  if(type == "integer" | type == "numeric"){
-    type <- "numeric"
+  if(type == "Integer" | type == "Numeric"){
+    type <- "Numeric"
   }
 
   if(language != "en"){
     switch(type,
-           numeric = "\u6570\u503C\u53D8\u91CF",
-           character = "\u5B57\u7B26\u53D8\u91CF",
-           logical = "\u903B\u8F91\u53D8\u91CF",
-           factor = "\u56E0\u5B50\u53D8\u91CF",
-           ordered = "\u6709\u5E8F\u56E0\u5B50\u53D8\u91CF",
-           categorical = "\u5206\u7C7B\u53D8\u91CF"
+           Numeric = "\u6570\u503C\u53D8\u91CF",
+           Character = "\u5B57\u7B26\u53D8\u91CF",
+           Logical = "\u903B\u8F91\u53D8\u91CF",
+           Factor = "\u56E0\u5B50\u53D8\u91CF",
+           Ordered = "\u6709\u5E8F\u56E0\u5B50\u53D8\u91CF",
+           Categorical = "\u5206\u7C7B\u53D8\u91CF"
     )
   }else{
     type
@@ -1178,6 +1180,16 @@ global_option_palette <- function(palette = NULL){
 }
 
 
+#' Set global color
+#'
+#' @param color color
+#'
+#' @export
+global_option_color <- function(color = NULL){
+  options(palette = color)
+}
+
+
 get_global_palette <- function(palette = NULL, default = NULL){
   if(is.null(palette)){
     palette <-  getOption("palette", default = NULL)
@@ -1190,6 +1202,17 @@ get_global_palette <- function(palette = NULL, default = NULL){
 #'
 #' @export
 global_option_reset <- function(){
+  global_option_languange()
+  global_option_fontsize()
+  global_option_family()
+  global_option_palette()
+}
+
+
+#' @rdname global_option_reset
+#'
+#' @export
+reset_global_option <- function(){
   global_option_languange()
   global_option_fontsize()
   global_option_family()

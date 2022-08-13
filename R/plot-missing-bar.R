@@ -4,6 +4,7 @@
 #' @param percent a logical, show percentage or frequency.
 #' @param show.all a logical, indicate whether to show all variables, by default,
 #' only show missing variables.
+#' @param show.miss.text a logical, indicate whether to show missing text, default TRUE.
 #' @param decreasing a logical. Should the sort order be increasing or decreasing?
 #' if is NULL, not sorted.
 #' @param detail.type detail type.
@@ -30,6 +31,7 @@
 gg_missing_bar <- function(data,
                        percent = TRUE,
                        show.all = FALSE,
+                       show.miss.text = TRUE,
                        decreasing = TRUE,
                        detail.type = TRUE,
                        digits = 1,
@@ -84,8 +86,6 @@ gg_missing_bar <- function(data,
 
   p <- ggplot2::ggplot(data = data.miss) +
     ggplot2::geom_col(ggplot2::aes_string(x  = "variable", y = y.string, fill  = "type"), width = bar.width) +
-    ggplot2::geom_text(ggplot2::aes_string(x = "variable", y = y.string, label = label),
-                       vjust = -0.75, family = font.family, size = (font.size - 1) / 2.848) +
     gg_theme_sci(legend.key.size = 0.8, font.family = font.family, font.size = font.size, ...) +
     ggplot2::theme( plot.margin = ggplot2::unit(c(0.6, 0.4, 0.4, 0.4), "cm")) +
     gg_delete_x_title() +
@@ -96,6 +96,11 @@ gg_missing_bar <- function(data,
     ggplot2::coord_cartesian(clip = "off") +
     ggplot2::scale_y_continuous(breaks = y.breaks, limits = c(0, max(y.breaks)), expand = c(0, 0))
 
+  if(show.miss.text){
+    p <- p +
+      ggplot2::geom_text(ggplot2::aes_string(x = "variable", y = y.string, label = label),
+                         vjust = -0.75, family = font.family, size = (font.size - 1) / 2.848)
+  }
 
   if(!is.null(bar.color)){
     p <- p +

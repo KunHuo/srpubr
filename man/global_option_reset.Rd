@@ -2,9 +2,12 @@
 % Please edit documentation in R/utilities.R
 \name{global_option_reset}
 \alias{global_option_reset}
+\alias{reset_global_option}
 \title{Reset global options}
 \usage{
 global_option_reset()
+
+reset_global_option()
 }
 \description{
 Reset global options

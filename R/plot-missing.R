@@ -5,6 +5,7 @@
 #' @param percent.miss a logical for missing plot, show percentage or frequency.
 #' @param show.all a logical, indicate whether to show all variables, by default,
 #' only show missing variables.
+#' @param show.miss.text a logical, indicate whether to show missing text for bar, default TRUE.
 #' @param decreasing a logical. Should the sort order be increasing or decreasing?
 #' if is NULL, not sorted.
 #' @param detail.type detail type.
@@ -38,6 +39,7 @@ gg_missing <- function(data,
                        percent.bar = TRUE,
                        percent.miss = FALSE,
                        show.all = FALSE,
+                       show.miss.text = TRUE,
                        decreasing = TRUE,
                        detail.type = TRUE,
                        add.var.miss = TRUE,
@@ -62,6 +64,7 @@ gg_missing <- function(data,
   A <- gg_missing_bar(data = data,
                       percent = percent.bar,
                       show.all = show.all,
+                      show.miss.text = show.miss.text,
                       decreasing = decreasing,
                       detail.type = detail.type,
                       digits = digits,

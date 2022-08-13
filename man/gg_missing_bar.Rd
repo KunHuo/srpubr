@@ -8,6 +8,7 @@ gg_missing_bar(
   data,
   percent = TRUE,
   show.all = FALSE,
+  show.miss.text = TRUE,
   decreasing = TRUE,
   detail.type = TRUE,
   digits = 1,
@@ -26,6 +27,8 @@ gg_missing_bar(
 
 \item{show.all}{a logical, indicate whether to show all variables, by default,
 only show missing variables.}
+
+\item{show.miss.text}{a logical, indicate whether to show missing text, default TRUE.}
 
 \item{decreasing}{a logical. Should the sort order be increasing or decreasing?
 if is NULL, not sorted.}
