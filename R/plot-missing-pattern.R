@@ -89,7 +89,7 @@ gg_missing_pattern <- function(data,
 
   p <- ggplot2::ggplot(plotdata) +
     ggplot2::geom_tile(ggplot2::aes_string(x = ".name", y = ".id", fill = ".value"), color = "black", size = 0.1) +
-    gg_theme_sci(legend.key.size = 0.8, font.family = font.family, font.size = font.size) +
+    gg_theme_sci(legend.key.size = 0.7, font.family = font.family, font.size = font.size) +
     ggplot2::theme(axis.line   = ggplot2::element_blank(),
                    axis.ticks  = ggplot2::element_blank(),
                    plot.margin = ggplot2::unit(c(0.6, 0.4, 0.4, 0.4), "cm"), ...) +

@@ -15,6 +15,7 @@ Imports:
     ggplot2,
     ggsci,
     officer,
+    patchwork,
     pROC,
     R.utils,
     showtext,

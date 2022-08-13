@@ -1075,3 +1075,40 @@ select_col_index <- function(data, ...){
 select_col_names <- function(data, ...){
   names(data)[select_col_index(data, ...)]
 }
+
+
+
+tag_levels <- function(tags, n = 1){
+
+  if(is.null(tags)){
+    return(NULL)
+  }
+
+  if(length(tags) == 1L){
+    if(tags[1] == "A"){
+      tag.levels <- LETTERS[1:n]
+    }else if(tags[1] == "a"){
+      tag.levels <- letters[1:n]
+    }else if(tags == "(A)"){
+      tag.levels <- sprintf("(%s)", LETTERS[1:n])
+    }else if(tags == "(a)"){
+      tag.levels <- sprintf("(%s)", letters[1:n])
+    }else if(tags == "[A]"){
+      tag.levels <- sprintf("[%s]", LETTERS[1:n])
+    }else if(tags == "[a]"){
+      tag.levels <- sprintf("[%s]", letters[1:n])
+    }else if(tags == "(1)"){
+      tag.levels <- sprintf("(%s)", 1:n)
+    }else if(tags == "[1]"){
+      tag.levels <- sprintf("[%s]", 1:n)
+    }else{
+      tag.levels <- LETTERS[1:n]
+    }
+    tag.levels
+  }else{
+    if(length(tags) != n){
+      stop("The number of tags should match the number of figures")
+    }
+    tags
+  }
+}
