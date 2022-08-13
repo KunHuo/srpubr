@@ -17,6 +17,7 @@ gg_theme_sci(
   panel.spacing = 0.6,
   strip.background = "gray90",
   aspect.ratio = NULL,
+  plot.margin = c(0.4, 0.6, 0.4, 0.4),
   ...
 )
 }
@@ -44,6 +45,8 @@ gg_theme_sci(
 \item{strip.background}{strip background.}
 
 \item{aspect.ratio}{the ratio of the width to the height, default NULL.}
+
+\item{plot.margin}{plot margin, top, right, bottom, left.}
 
 \item{...}{further arguments pass to the \link[ggplot2:theme]{ggplot2::theme} function.}
 }
