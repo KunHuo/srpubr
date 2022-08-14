@@ -6,7 +6,8 @@
 #' @param decreasing a logical. Should the sort order be increasing or decreasing?
 #' if is NULL, not sorted.
 #' @param detail.type detail type.
-#' @param digits digits for missing percent, defualt 1.
+#' @param digits digits for missing percent, default 1.
+#' @param show.row.number a logical, indicate whether to show missing row numbers, default FALSE.
 #' @param language language, typically “en”, or "zh", default "en".
 #' @param table.number table number.
 #' @param ... unused arguments.
@@ -28,6 +29,7 @@ identify_missing <- function(data,
                              decreasing = TRUE,
                              detail.type = TRUE,
                              digits = 1,
+                             show.row.number = FALSE,
                              language = NULL,
                              table.number = NULL,
                              ...){
@@ -64,11 +66,19 @@ identify_missing <- function(data,
       res <- res[order(res[["m"]], decreasing = decreasing), ]
     }
 
+    if(show.row.number){
+      miss.rows <- sapply(res[[1]], function(x){
+        paste(which(is.na(data[[x]])), collapse = " ")
+      })
+      res <- append2(res, data.frame(miss.rows = miss.rows), after = ncol(res))
+    }
+
     names(res)[names(res) == "variable"] <- string_variable(language)
     names(res)[names(res) == "type"]     <- string_missing_type(language)
     names(res)[names(res) == "n"]        <- string_missing_total(language)
     names(res)[names(res) == "m"]        <- string_missing_count(language)
     names(res)[names(res) == "p"]        <- string_missing_percent(language)
+    names(res)[names(res) == "miss.rows"]<- string_missing_rows(language)
 
     n.miss.variable <- sum(sapply(data, function(x){ any(is.na(x)) }))
 
@@ -78,6 +88,7 @@ identify_missing <- function(data,
 
     res <-  add_title(res, title)
     res <-  tibble::as_tibble(res)
+    attr(res, "language") <- language
 
     class(res) <- c("srp.miss", class(res))
 
@@ -96,8 +107,30 @@ identify_missing <- function(data,
 #'
 #' @export
 print.srp.miss <- function(x, ...){
-  x[[ncol(x)]] <- str_align(x[[ncol(x)]], sep = ".")
-  print_booktabs(x, adj = c("left", "left", "center"))
+
+  language <- attr(x, "language")
+
+  adj <- rep("center", ncol(x))
+
+  adj[which(names(x) == string_variable(language))]     <- "left"
+  adj[which(names(x) == string_missing_type(language))] <- "left"
+  adj[which(names(x) == string_missing_rows(language))] <- "left"
+
+  col.mp <- which(names(x) == string_missing_percent(language))
+
+  if(length(col.mp) != 0L){
+    x[[col.mp]] <- str_align(x[[col.mp]], sep = ".")
+  }
+
+  print_booktabs(x, adj = adj, ...)
+
+}
+
+
+string_missing_rows <- function(language){
+  switch(language,
+         en = "Missing rows",
+         zh = "\u7f3a\u5931\u884c")
 }
 
 

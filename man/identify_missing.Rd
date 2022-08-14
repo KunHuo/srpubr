@@ -10,6 +10,7 @@ identify_missing(
   decreasing = TRUE,
   detail.type = TRUE,
   digits = 1,
+  show.row.number = FALSE,
   language = NULL,
   table.number = NULL,
   ...
@@ -26,7 +27,9 @@ if is NULL, not sorted.}
 
 \item{detail.type}{detail type.}
 
-\item{digits}{digits for missing percent, defualt 1.}
+\item{digits}{digits for missing percent, default 1.}
+
+\item{show.row.number}{a logical, indicate whether to show missing row numbers, default FALSE.}
 
 \item{language}{language, typically “en”, or "zh", default "en".}
 
