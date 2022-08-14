@@ -8,7 +8,7 @@ gg_theme_sci(
   font.size = 12,
   font.family = "serif",
   axis.line.size = 0.25,
-  axis.ticks.length = 0.15,
+  axis.ticks.length = 0.12,
   legend.key.size = 1,
   face.bold = FALSE,
   panel.grid.major = FALSE,
@@ -28,7 +28,7 @@ gg_theme_sci(
 
 \item{axis.line.size}{axis line size, default 0.25.}
 
-\item{axis.ticks.length}{axis ticks length, default 0.15.}
+\item{axis.ticks.length}{axis ticks length, default 0.12.}
 
 \item{legend.key.size}{legend key size, dsfault 1.}
 

@@ -338,9 +338,9 @@ print.srp.roc <- function(x, ...){
 
   data[exposure] <- lapply(data[exposure], function(x){
     if(is.factor(x)){
-      as.numeric(x)
+      factor(x, ordered = TRUE)
     }else if(is.character(x)){
-      as.numeric(as.factor(x))
+      factor(x, ordered = TRUE)
     }else{
       x
     }

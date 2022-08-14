@@ -352,7 +352,7 @@ str_capitalize <- function (x, method = c("first", "word", "title")) {
         }
       } else {
         if (z[[i]][1] == "" & length(z[[i]]) >
-            1) z[[i]] <- VecRot(z[[i]], -1)
+            1) z[[i]] <- vec_rot(z[[i]], -1)
       }
       do.call(paste, list(nn[[i]], z[[i]], sep = "",
                           collapse = ""))
@@ -360,4 +360,18 @@ str_capitalize <- function (x, method = c("first", "word", "title")) {
   })
   res[na] <- NA
   return(res)
+}
+
+vec_rot <- function (x, k = 1L) {
+  if (k != round(k)) {
+    k <- round(k)
+    warning("'k' is not an integer")
+  }
+  k <- k%%length(x)
+  rep(x, times = 2L)[(length(x) - k + 1L):(2L * length(x) - k)]
+}
+
+
+`%nin%` <- function (x, table) {
+  is.na(match(x, table))
 }

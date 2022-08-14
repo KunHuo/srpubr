@@ -142,9 +142,12 @@ gg_roc <- function(data,
     )
 
   if(show.cutoff){
-    threshold.data <-  lapply(roclist, function(x){
+    threshold.data <-  lapply(names(roclist), function(x){
+
+      object <- roclist[[x]]
+
       rets <- c("threshold", "sensitivity", "specificity")
-      res <- coords <- pROC::coords(x,
+      res <- coords <- pROC::coords(object,
                                     x = "best",
                                     ret = rets,
                                     transpose = TRUE)
@@ -160,6 +163,9 @@ gg_roc <- function(data,
                           ggplot2::aes_string(x = "specificity", y = "sensitivity", color = "variable"),
                           show.legend = FALSE, size = 2.5)
   }
+
+
+
 
   if(!is.null(line.color)){
     p <- p +
