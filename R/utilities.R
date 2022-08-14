@@ -1218,3 +1218,14 @@ reset_global_option <- function(){
   global_option_family()
   global_option_palette()
 }
+
+delete_duplicate_values <- function(x){
+  for(i in rev(seq_along(x))){
+    if(i != 1){
+      if(x[i] == x[i - 1]){
+        x[i] <- NA
+      }
+    }
+  }
+  return(x)
+}

@@ -17,8 +17,8 @@
 #' quantiles are computed.
 #'
 #' @param data a data frame.
-#' @param ... numeric variable names.
-#' @param group group variable names.
+#' @param varnames numeric variable names.
+#' @param group group variable name.
 #' @param language language, typically “en”, or "zh", default "en".
 #'
 #' @return
@@ -26,16 +26,17 @@
 #'
 #' is_outlier() and is_extreme() return logical vectors.
 #' @export
-identify_outliers <- function(data, ..., group = NULL, language = NULL){
+identify_outliers <- function(data, group = NULL, varnames = NULL, language = NULL){
 
   language <- get_global_languange(language, default = "en")
 
-  if(length(list(...)) == 0L){
+  if(is.null(varnames)){
     varnames <- names(data)
   }else{
-    varnames <- select_col_names(data, ...)
+    varnames <- select_col_names(data, varnames)
   }
 
+  varnames <- setdiff(varnames, group)
   varnames <- varnames[sapply(data[varnames], is.numeric)]
 
   if(length(varnames) == 0L){
@@ -45,24 +46,59 @@ identify_outliers <- function(data, ..., group = NULL, language = NULL){
 
   names(varnames) <- varnames
 
-  out <- lapply(data[varnames], function(x){
+  data$.row.number <- 1:nrow(data)
+
+  exec <- function(d, varname){
+    x <- d[[varname]]
     row.number <- which(is_outlier(x))
     if(length(row.number) != 0L){
-      value <- x[row.number]
-      res  <- data.frame(row.number = row.number, value = value, outlier = "TRUE", extreme = "FALSE")
+      res <- data[row.number, c(".row.number", varname), drop = FALSE]
+      res$outlier <- "TRUE"
+      names(res)[2] <- "value"
       extreme <- which(is_extreme(x))
       if(length(extreme) != 0L){
-        for(i in seq_along(extreme)){
-          res$extreme[res$row.number == extreme[i]] <- "TRUE  *"
-        }
+        extreme.number <- data[extreme, ".row.number", drop = FALSE]
+        extreme.number$extreme <- "TRUE  *"
+        res <- merge_left(res, extreme.number, by = ".row.number")
+        res$extreme[is.na(res$extreme)] <- "FALSE"
+        res
+      }else{
+        res$extreme <- "FALSE"
       }
+      row.names(res) <- NULL
+      res
+    }else{
+      NULL
+    }
+  }
+
+  out <- lapply(varnames, function(varname){
+    if(is.null(group)){
+      exec(data, varname)
+    }else{
+       res <- NULL
+       for(i in unique(data[[group]])){
+         d <- data[data[[group]] == i, , drop = FALSE]
+         r <- exec(d, varname)
+         if(!is.null(r)){
+           r <- append2(r, data.frame(group = i), after = 0)
+         }
+         res <- rbind(res, r)
+       }
       res
     }
   })
 
-  out <- list_rbind(out, collapse.names = TRUE)
+  if(all(sapply(out, is.null))){
+    cat("\n No outliers. \n\n")
+    return(invisible(NULL))
+  }
+
+  out <- list_rbind(out, collapse.names = FALSE)
+  out[[1]] <- delete_duplicate_values(out[[1]])
+
   out <- tibble::as_tibble(out)
-  names(out)[1] <- "Row number"
+  #names(out)[1] <- "Row number"
 
   attr(out, "title") <- "Identify univariate outliers using boxplot methods"
   attr(out, "note")  <- paste("Note: Values above Q3 + 1.5\u00D7IQR or below Q1 - 1.5\u00D7IQR",

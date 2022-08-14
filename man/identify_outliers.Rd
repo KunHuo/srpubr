@@ -6,7 +6,7 @@
 \alias{is_extreme}
 \title{Identify univariate outliers}
 \usage{
-identify_outliers(data, ..., language = NULL)
+identify_outliers(data, group = NULL, varnames = NULL, language = NULL)
 
 is_outlier(x, coef = 1.5)
 
@@ -15,7 +15,9 @@ is_extreme(x)
 \arguments{
 \item{data}{a data frame.}
 
-\item{...}{numeric variables.}
+\item{group}{group variable name.}
+
+\item{varnames}{numeric variable names.}
 
 \item{language}{language, typically “en”, or "zh", default "en".}
 
