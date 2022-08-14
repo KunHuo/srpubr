@@ -17,7 +17,8 @@
 #' quantiles are computed.
 #'
 #' @param data a data frame.
-#' @param ... numeric variables.
+#' @param ... numeric variable names.
+#' @param group group variable names.
 #' @param language language, typically “en”, or "zh", default "en".
 #'
 #' @return
@@ -25,7 +26,7 @@
 #'
 #' is_outlier() and is_extreme() return logical vectors.
 #' @export
-identify_outliers <- function(data, ..., language = NULL){
+identify_outliers <- function(data, ..., group = NULL, language = NULL){
 
   language <- get_global_languange(language, default = "en")
 
