@@ -48,57 +48,35 @@ identify_outliers <- function(data, group = NULL, varnames = NULL, language = NU
 
   data$.row.number <- 1:nrow(data)
 
-  exec <- function(d, varname){
-    x <- d[[varname]]
-    row.number <- which(is_outlier(x))
-    if(length(row.number) != 0L){
-      res <- data[row.number, c(".row.number", varname), drop = FALSE]
-      res$outlier <- "TRUE"
-      names(res)[2] <- "value"
-      extreme <- which(is_extreme(x))
-      if(length(extreme) != 0L){
-        extreme.number <- data[extreme, ".row.number", drop = FALSE]
-        extreme.number$extreme <- "TRUE  *"
-        res <- merge_left(res, extreme.number, by = ".row.number")
-        res$extreme[is.na(res$extreme)] <- "FALSE"
-        res
-      }else{
-        res$extreme <- "FALSE"
-      }
-      row.names(res) <- NULL
-      res
-    }else{
-      NULL
-    }
+  exec <- function(data, varname){
+    data$outlier <- is_outlier(data[[varname]])
+    data$extreme <- is_extreme(data[[varname]])
+    data <- data[, c(".row.number", varname, "outlier", "extreme")]
+    names(data)[2] <- "value"
+    data
   }
 
   out <- lapply(varnames, function(varname){
     if(is.null(group)){
       exec(data, varname)
     }else{
-       res <- NULL
-       for(i in unique(data[[group]])){
-         d <- data[data[[group]] == i, , drop = FALSE]
-         r <- exec(d, varname)
-         if(!is.null(r)){
-           r <- append2(r, data.frame(group = i), after = 0)
-         }
-         res <- rbind(res, r)
-       }
-      res
+      sdata <- split.data.frame(data, f = data[[group]])
+      res <- lapply(sdata, function(d){ exec(data = d, varname ) })
+      list_rbind(res, varname = "group")
     }
   })
 
-  if(all(sapply(out, is.null))){
-    cat("\n No outliers. \n\n")
+  out <- list_rbind(out, collapse.names = FALSE)
+  out <- out[!is.na(out$outlier) & out$outlier, ]
+
+  if(nrow(out) < 1L){
+    cat("\nNo outliers.\n\n")
     return(invisible(NULL))
   }
 
-  out <- list_rbind(out, collapse.names = FALSE)
   out[[1]] <- delete_duplicate_values(out[[1]])
 
   out <- tibble::as_tibble(out)
-  #names(out)[1] <- "Row number"
 
   attr(out, "title") <- "Identify univariate outliers using boxplot methods"
   attr(out, "note")  <- paste("Note: Values above Q3 + 1.5\u00D7IQR or below Q1 - 1.5\u00D7IQR",
