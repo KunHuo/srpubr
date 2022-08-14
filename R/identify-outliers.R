@@ -18,14 +18,75 @@
 #'
 #' @param data a data frame.
 #' @param ... numeric variables.
+#' @param language language, typically “en”, or "zh", default "en".
 #'
 #' @return
 #' identify_outliers() returns a data frame.
 #'
 #' is_outlier() and is_extreme() return logical vectors.
 #' @export
-identify_outliers <- function(data, ...){
+identify_outliers <- function(data, ..., language = NULL){
 
+  language <- get_global_languange(language, default = "en")
+
+  if(length(list(...)) == 0L){
+    varnames <- names(data)
+  }else{
+    varnames <- select_col_names(data, ...)
+  }
+
+  varnames <- varnames[sapply(data[varnames], is.numeric)]
+
+  if(length(varnames) == 0L){
+    cat("\n No numeric variables to identify outliers. \n\n")
+    return(invisible(NULL))
+  }
+
+  names(varnames) <- varnames
+
+  out <- lapply(data[varnames], function(x){
+    row.number <- which(is_outlier(x))
+    if(length(row.number) != 0L){
+      value <- x[row.number]
+      res  <- data.frame(row.number = row.number, value = value, outlier = "TRUE", extreme = "FALSE")
+      extreme <- which(is_extreme(x))
+      if(length(extreme) != 0L){
+        for(i in seq_along(extreme)){
+          res$extreme[res$row.number == extreme[i]] <- "TRUE  *"
+        }
+      }
+      res
+    }
+  })
+
+  out <- list_rbind(out, collapse.names = TRUE)
+  out <- tibble::as_tibble(out)
+  names(out)[1] <- "Row number"
+
+  attr(out, "title") <- "Identify univariate outliers using boxplot methods"
+  attr(out, "note")  <- paste("Note: Values above Q3 + 1.5\u00D7IQR or below Q1 - 1.5\u00D7IQR",
+                        "are considered as outliers. Values above Q3 + 3\u00D7IQR or",
+                        "below Q1 - 3\u00D7IQR are considered as extreme points (or",
+                        "extreme outliers). Q1 and Q3 are the first and third",
+                        "quartile, respectively. IQR is the interquartile range",
+                        "(IQR = Q3 - Q1).", sep = " ")
+
+  class(out) <- c("srp.outlier", class(out))
+
+  out
+}
+
+
+#' Print class of 'srp.outlier'
+#'
+#' @param x an object.
+#' @param ... passed to print.
+#'
+#' @keywords internal
+#'
+#' @export
+print.srp.outlier<- function(x, ...){
+  print_booktabs(x, adj = c("left"), ...)
 }
 
 
