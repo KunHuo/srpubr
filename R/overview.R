@@ -26,7 +26,6 @@ overview <- function(data, digits = 3, ...){
       max    <- max(dv, na.rm = TRUE)
       median <- format_digits(stats::median(dv, na.rm = TRUE), digits)
       mean   <- format_digits(mean(dv, na.rm = TRUE), digits)
-
       data.frame(col = which(names(data) == x),
                  variable = x,
                  type = type,
@@ -55,13 +54,6 @@ overview <- function(data, digits = 3, ...){
       levels$variable <- paste0("  ", levels$variable)
       levels <- append2(levels, data.frame(col = NA), after = 0)
       rbind(all, levels)
-    }else if(is.character(dv)){
-      data.frame(col = which(names(data) == x),
-                 variable = x,
-                 type = type,
-                 valid = valid,
-                 unique = unique,
-                 miss = miss)
     }else{
       data.frame(col = which(names(data) == x),
                  variable = x,
