@@ -1030,7 +1030,7 @@ reshape_long <- function(data,
     cols <- names(data)[cols]
   }
 
-  cols <- select_col_names(data, cols)
+  cols <- select_variable(data, cols)
 
   res <- stats::reshape(data,
                  direction = "long",
@@ -1048,36 +1048,6 @@ reshape_long <- function(data,
   }
   tibble::as_tibble(res)
 }
-
-
-select_col_index <- function(data, ...){
-  varnames <- list(...)
-  res <- lapply(varnames, function(x){
-    if(is.numeric(x)){
-      x
-    }else{
-      sapply(x, function(i){
-        if(regex_detect(i, pattern = ":", fixed = TRUE)){
-          st <- regex_split(i, pattern = ":", fixed = TRUE)[[1]]
-          start <- which(names(data) == st[1])
-          end   <- which(names(data) == st[2])
-          start:end
-        }else{
-          which(names(data) == i)
-        }
-      })
-    }
-  })
-  res <- unique(unlist(res))
-  names(res) <- names(data)[res]
-  res
-}
-
-
-select_col_names <- function(data, ...){
-  names(data)[select_col_index(data, ...)]
-}
-
 
 
 tag_levels <- function(tags, n = 1){

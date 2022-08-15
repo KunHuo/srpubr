@@ -85,7 +85,8 @@ gg_roc <- function(data,
   font.size   <- get_global_fontsize(font.size, default = 12)
   line.color  <- get_global_palette(line.color)
 
-  exposure <- select_col_names(data, exposure)
+  outcome  <- select_variable(data, outcome)
+  exposure <- select_variable(data, exposure)
 
   roclist <- .roc(data = data,
                  outcome = outcome,

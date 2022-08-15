@@ -30,14 +30,8 @@ identify_outliers <- function(data, group = NULL, varnames = NULL, language = NU
 
   language <- get_global_languange(language, default = "en")
 
-  if(is.null(varnames)){
-    varnames <- names(data)
-  }else{
-    varnames <- select_col_names(data, varnames)
-  }
-
+  varnames <- select_numeric(data, varnames, type = "name")
   varnames <- setdiff(varnames, group)
-  varnames <- varnames[sapply(data[varnames], is.numeric)]
 
   if(length(varnames) == 0L){
     cat("\n No numeric variables to identify outliers. \n\n")
