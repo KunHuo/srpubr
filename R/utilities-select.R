@@ -1,6 +1,13 @@
 #' Select variables
 #'
-#' @description Select variables in a data frame.
+#' @description Functions select variables in a data frame.
+#'
+#' * select_numeric: select numeric variables.
+#' * select_factor: select factor variables.
+#' * select_character: select character variables.
+#' * select_category: select factor and character variables.
+#' * select_logical: select logical variables.
+#' * select_variable: select variables.
 #'
 #' @param data a data frame.
 #' @param varnames variable names，Indicates to select the corresponding data
@@ -11,11 +18,42 @@
 #'
 #' @return depends on the parameter type. 'name' for a vector of character,
 #' 'index' for a vector of integer, and 'data' for a data frame.
+#'
 #' @export
+#'
+#' @examples
+#' # return variable names
+#' select_character(lung)
+#' select_numeric(lung)
+#' select_factor(lung)
+#' select_category(lung)
+#'
+#' # return col index
+#' select_numeric(lung, type = "index")
+#'
+#' # return data frame
+#' select_numeric(lung, type = "data")
+#'
+#' # select in varnames
+#' select_numeric(lung, varnames = 1:4)
+#' select_numeric(lung, varnames = "time:ph.karno")
+#' select_numeric(lung, varnames = c("time:ph.karno", "wt.loss"))
+#'
+#' select_variable(lung, c("time:age", "wt.loss"), 5)
 select_numeric <- function(data, varnames = NULL, type = c("name", "data", "index")){
   .select_impl(data = data,
                varnames = varnames,
                var.type = "numeric",
+               out.type = type)
+}
+
+
+#' @rdname select_numeric
+#' @export
+select_character <- function(data, varnames = NULL, type = c("name", "data", "index")){
+  .select_impl(data = data,
+               varnames = varnames,
+               var.type = "character",
                out.type = type)
 }
 
@@ -111,7 +149,7 @@ select_variable <- function(data, ..., type = c("name", "data", "index")){
 
 .select_impl <- function(data,
                          varnames = NULL,
-                         var.type = c("numeric", "factor", "logical", "category"),
+                         var.type = c("numeric", "factor", "character", "logical", "category"),
                          out.type = c("name", "data", "index"),
                          ...){
 
@@ -125,10 +163,11 @@ select_variable <- function(data, ..., type = c("name", "data", "index")){
   }
 
   varnames <- switch(var.type,
-                     numeric  = varnames[sapply(data[varnames], is.numeric)],
-                     factor   = varnames[sapply(data[varnames], is.factor) ],
-                     logical  = varnames[sapply(data[varnames], is.logical)],
-                     category = varnames[sapply(data[varnames], \(x){ is.factor(x) | is.character(x) })])
+                     numeric   = varnames[sapply(data[varnames], is.numeric)],
+                     factor    = varnames[sapply(data[varnames], is.factor) ],
+                     character = varnames[sapply(data[varnames], is.character) ],
+                     logical   = varnames[sapply(data[varnames], is.logical)],
+                     category  = varnames[sapply(data[varnames], \(x){ is.factor(x) | is.character(x) })])
 
   if(length(varnames) == 0L){
     return(switch(out.type,

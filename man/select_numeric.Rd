@@ -2,6 +2,7 @@
 % Please edit documentation in R/utilities-select.R
 \name{select_numeric}
 \alias{select_numeric}
+\alias{select_character}
 \alias{select_factor}
 \alias{select_category}
 \alias{select_logical}
@@ -9,6 +10,8 @@
 \title{Select variables}
 \usage{
 select_numeric(data, varnames = NULL, type = c("name", "data", "index"))
+
+select_character(data, varnames = NULL, type = c("name", "data", "index"))
 
 select_factor(data, varnames = NULL, type = c("name", "data", "index"))
 
@@ -35,5 +38,33 @@ depends on the parameter type. 'name' for a vector of character,
 'index' for a vector of integer, and 'data' for a data frame.
 }
 \description{
-Select variables in a data frame.
+Functions select variables in a data frame.
+\itemize{
+\item select_numeric: select numeric variables.
+\item select_factor: select factor variables.
+\item select_character: select character variables.
+\item select_category: select factor and character variables.
+\item select_logical: select logical variables.
+\item select_variable: select variables.
+}
+}
+\examples{
+# return variable names
+select_character(lung)
+select_numeric(lung)
+select_factor(lung)
+select_category(lung)
+
+# return col index
+select_numeric(lung, type = "index")
+
+# return data frame
+select_numeric(lung, type = "data")
+
+# select in varnames
+select_numeric(lung, varnames = 1:4)
+select_numeric(lung, varnames = "time:ph.karno")
+select_numeric(lung, varnames = c("time:ph.karno", "wt.loss"))
+
+select_variable(lung, c("time:age", "wt.loss"), 5)
 }
