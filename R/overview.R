@@ -11,7 +11,7 @@
 #' overview(aSAH)
 #'
 #' overview(lung)
-overview <- function(data, digits = 3, ...){
+overview <- function(data, digits = 2, ...){
 
   out <- lapply(names(data), function(x){
     dv <- data[[x]]
