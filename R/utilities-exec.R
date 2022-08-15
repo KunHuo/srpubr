@@ -1,3 +1,13 @@
+#' bind a list by rows
+#'
+#' @param data a data frame.
+#' @param names.as.column names as a column, default TRUE..
+#' @param collapse.names collapse names, default FALSE.
+#' @param collapse.one.row collapse one row, default FALSE.
+#' @param varname variable name.
+#'
+#' @return a data frame.
+#' @export
 list_rbind <- function(data,
                        names.as.column = TRUE,
                        collapse.names = FALSE,
@@ -53,11 +63,6 @@ list_rbind <- function(data,
     names(out)[1] <- varname
   }
   out
-}
-
-
-list_cbind <- function(data){
-
 }
 
 

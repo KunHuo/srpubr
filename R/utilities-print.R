@@ -1,4 +1,14 @@
-print_booktabs <- function(data, sep = "__", adj = NULL){
+#' Print booktags
+#'
+#' @param data a data frame.
+#' @param sep sep.
+#' @param adj adj.
+#' @param ... unused
+#'
+#' @keywords internal
+#'
+#' @export
+print_booktabs <- function(data, sep = "__", adj = NULL, ...){
 
   title <- attr(data, "title")
   note  <- attr(data, "note")
@@ -48,8 +58,14 @@ print_booktabs <- function(data, sep = "__", adj = NULL){
 
   data[, ] <- lapply(data[, ], function(x){
     if(is.numeric(x)){
-      fmt <- sprintf("%%.%df", max_digits(x))
-      sprintf(fmt, x)
+      sapply(x, \(i){
+        if(is.na(i)){
+          ""
+        }else{
+          fmt <- sprintf("%%.%df", max_digits(i))
+          sprintf(fmt, i)
+        }
+      })
     }else{
       sapply(x, function(i){
         if(is.na(i)){
