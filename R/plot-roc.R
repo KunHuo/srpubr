@@ -156,6 +156,8 @@ gg_roc <- function(data,
       res$specificity <- 1 - res$specificity
       res
     })
+    
+    names(threshold.data) <- names(roclist)
 
     threshold.data <- list_rbind(threshold.data)
 
@@ -164,8 +166,6 @@ gg_roc <- function(data,
                           ggplot2::aes_string(x = "specificity", y = "sensitivity", color = "variable"),
                           show.legend = FALSE, size = 2.5)
   }
-
-
 
 
   if(!is.null(line.color)){
