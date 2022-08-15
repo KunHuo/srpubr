@@ -22,8 +22,8 @@ overview <- function(data, digits = 2, ...){
     valid  <- length(dv) - miss
 
     if(is.numeric(dv)){
-      min    <- min(dv, na.rm = TRUE)
-      max    <- max(dv, na.rm = TRUE)
+      min    <- format_digits(min(dv, na.rm = TRUE), digits)
+      max    <- format_digits(max(dv, na.rm = TRUE), digits)
       median <- format_digits(stats::median(dv, na.rm = TRUE), digits)
       mean   <- format_digits(mean(dv, na.rm = TRUE), digits)
       data.frame(col = which(names(data) == x),

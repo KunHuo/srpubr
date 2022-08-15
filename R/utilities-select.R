@@ -89,18 +89,17 @@ select_logical <- function(data, varnames = NULL, type = c("name", "data", "inde
 
 
 #' @rdname select_numeric
-#' @param ... variables to select.If not specified, all variables will be returned.
+#' @param ... variables to select.
 #' @export
 select_variable <- function(data, ..., type = c("name", "data", "index")){
 
   type  <- match.arg(type)
 
-  if(length(list(...)) == 0L){
-    index <- seq_along(data)
-    names(index) <- names(data)
-  }else{
-    index <- .col_index(data, ...)
+  if(length(c(...)) == 0L){
+    return(NULL)
   }
+
+  index <- .col_index(data, ...)
 
   if(length(index) == 0L){
     return(NULL)

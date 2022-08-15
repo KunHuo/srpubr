@@ -31,7 +31,7 @@ variables.}
 \item{type}{return type, 'name' for a vector of character, 'index' for a
 vector of integer, and 'data' for a data frame.}
 
-\item{...}{variables to select.If not specified, all variables will be returned.}
+\item{...}{variables to select.}
 }
 \value{
 depends on the parameter type. 'name' for a vector of character,
