@@ -4,12 +4,14 @@
 \alias{add_lables}
 \title{Add labels to  the first column of a data frame}
 \usage{
-add_lables(x, value)
+add_lables(data, ldata, col = 1)
 }
 \arguments{
-\item{x}{a data frame.}
+\item{data}{a data frame.}
 
-\item{value}{a data frame contain the column of term, code, and label.}
+\item{ldata}{a data frame contain the column of term, code, and label.}
+
+\item{col}{col index.}
 }
 \value{
 a data frame.
