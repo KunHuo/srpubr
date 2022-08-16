@@ -48,46 +48,6 @@ add_varnames_column <- function(x, which = 1){
 }
 
 
-#' Merge two tables  by the first column
-#'
-#' @param x a data frame.
-#' @param y a data frame.
-#' @param name.x name of x.
-#' @param name.y name of y.
-#' @param name.x.index Start naming from which column of x.
-#' @param name.y.index Start naming from which column of y.
-#' @param sep a character string to separate the terms.
-#'
-#' @return a data frame.
-#' @export
-merge_table <- function(x, y, name.x = NULL, name.y = NULL, name.x.index = 2, name.y.index = 2, sep = "__"){
-  x.class <- class(x)
-  x.title <- attr(x, "title")
-  x.note <- attr(x, "note")
-
-  if(!is.null(name.x)){
-    names(x) <- c(names(x)[1:(name.x.index - 1)],
-                  paste(name.x, names(x)[c(name.x.index:length(names(x)))], sep = sep))
-  }
-
-  if(!is.null(name.y)){
-    names(y) <- c(names(y)[1:(name.y.index - 1)],
-                  paste(name.y, names(y)[c(name.y.index:length(names(y)))], sep = sep))
-  }
-
-  x <- add_terms_column(x, which = 1)
-  y <- add_terms_column(y, which = 1)
-  y <- y[, -2, drop = FALSE]
-  out <- merge_left(x, y, by = "term")
-  out <- out[, -1, drop = FALSE]
-
-  class(out) <- x.class
-  attr(out, "title") <- x.title
-  attr(out, "note") <- x.note
-  out
-}
-
-
 #' Add title attribute to a data frame
 #'
 #' @param x a data frame.
