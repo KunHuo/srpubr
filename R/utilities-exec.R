@@ -94,5 +94,13 @@ group_exec <- function(data, group = NULL, func = NULL, ...){
     tryCatch(do_call(func, d, ...), error = function(e) NULL)
   })
 
-  list_rbind(out)
+  if(length(group) == 0L){
+    list_rbind(out, names.as.column = FALSE)
+  }else if(length(group) == 1L){
+    list_rbind(out, names.as.column = TRUE, varname = group)
+  }else{
+    out <- list_rbind(out, names.as.column = TRUE, varname = ".groups")
+    out <- separate2cols(out, varname = ".groups", sep = "#", into = group)
+    out
+  }
 }
