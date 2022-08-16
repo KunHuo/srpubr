@@ -83,24 +83,69 @@ do_call <- function(what, ..., envir = parent.frame()){
 }
 
 
-group_exec <- function(data, group = NULL, func = NULL, ...){
+#' Apply a function to a data frame split by groups
+#'
+#' @param data  a data frame.
+#' @param group one or more group variable name(s).
+#' @param func a function to be applied to (usually data-frame) subsets of data.
+#' the function must be return a data frame.
+#' @param ... optional arguments to func.
+#' @param out.list logical; if FALSE, return a data frame, otherwise return a list.
+#' @param warning logical; whether to show error messages.
+#'
+#' @return a data frame if out.list is FALSE, otherwise return a list.
+#' @export
+#'
+#' @examples
+#' # Basic
+#' group_exec(mtcars, func = \(d){
+#'   data.frame(mean = mean(d$mpg), min = min(d$mpg))
+#' })
+#'
+#' # By group
+#' group_exec(mtcars, group = "vs", func = \(d){
+#'   data.frame(mean = mean(d$mpg), min = min(d$mpg))
+#' })
+#'
+#' # Return a list
+#' group_exec(mtcars, group = "vs", func = \(d){
+#'   data.frame(mean = mean(d$mpg), min = min(d$mpg))
+#' }, out.list = TRUE)
+#'
+#' # With more groups
+#' group_exec(mtcars, group = c("vs", "am"), func = \(d){
+#'   data.frame(mean = mean(d$mpg), min = min(d$mpg))
+#' })
+group_exec <- function(data, group = NULL, func = NULL, ..., out.list = FALSE, warning = TRUE){
+
   group <- select_variable(data, group)
+
   if(length(group) == 0L){
     sdat <- list(overall = data)
   }else{
     sdat <- split.data.frame(data, f = data[group], drop = TRUE, sep = "#")
   }
+
   out <- lapply(sdat, \(d){
-    tryCatch(do_call(func, d, ...), error = function(e) NULL)
+    tryCatch(do_call(func, d, ...), error = function(e) {
+      if(warning){
+        cat("\n", e, "\n")
+      }
+      NULL
+    })
   })
 
-  if(length(group) == 0L){
-    list_rbind(out, names.as.column = FALSE)
-  }else if(length(group) == 1L){
-    list_rbind(out, names.as.column = TRUE, varname = group)
-  }else{
-    out <- list_rbind(out, names.as.column = TRUE, varname = ".groups")
-    out <- separate2cols(out, varname = ".groups", sep = "#", into = group)
+  if(out.list){
     out
+  }else{
+    if(length(group) == 0L){
+      list_rbind(out, names.as.column = FALSE)
+    }else if(length(group) == 1L){
+      list_rbind(out, names.as.column = TRUE, varname = group)
+    }else{
+      out <- list_rbind(out, names.as.column = TRUE, varname = ".groups")
+      out <- separate2cols(out, varname = ".groups", sep = "#", into = group)
+      out
+    }
   }
 }
