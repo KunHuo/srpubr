@@ -1199,3 +1199,49 @@ delete_duplicate_values <- function(x){
   }
   return(x)
 }
+
+#' Separate a character column into multiple columns
+#'
+#' @param data a data frame.
+#' @param varname column name or position to separate.
+#' @param into names of new variables to create as character vector.
+#' @param sep separator between columns.
+#' @param fixed logical. If TRUE, pattern is a string to be matched as is. Overrides all conflicting arguments.
+#' @param keep logical. Indicates whether to keep the column of 'varname'.
+#' @param ... unused.
+#'
+#' @return a data frame.
+#' @export
+#'
+#' @examples
+#' df <- data.frame(x = c(NA, "x.y", "x.z", "z"))
+#' 
+#' separate2cols(data = df, varname = "x")
+#' separate2cols(data = df, varname = "x", keep = TRUE)
+#' separate2cols(data = df, varname = "x", keep = TRUE, into = c("A", "B"))
+separate2cols <- function(data, varname = NULL, into = NULL, sep = ".", fixed = TRUE, keep = FALSE, ...){
+  
+  varname <- select_variable(data, varname, type = "name")
+  res <- regex_split(data[[varname]], pattern = sep, fixed = fixed) 
+  max <- max(sapply(res, length))
+  
+  res <- lapply(res, \(x){ c(x, rep(NA, max - length(x))) })
+  res <- do.call(rbind, res)
+  
+  if(is.null(into)){
+    new.names <- sprintf("%s.%d", varname, 1:ncol(res))
+  }else{
+    new.names <- into
+  }
+  
+  colnames(res) <- new.names
+  res <- as.data.frame(res)
+  
+  data <- append2(data, res, after = varname)
+  
+  if(keep){
+    data
+  }else{
+    data[, -which(names(data) == varname), drop = FALSE]
+  }
+}
