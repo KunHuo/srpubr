@@ -667,23 +667,23 @@ seq2 <- function(from, to) {
 }
 
 
+#' Is object an empty vector or NULL and NA?
+#'
+#' @param x object to test.
+#'
+#' @return a logical.
+#' @export
+#'
+#' @examples
+#' is_empty(NULL)
+#' is_empty(list())
+#' is_empty(list(NULL))
+#' is_empty(NA)
 is_empty <- function(x){
-  if(is.null(x)){
-    return(TRUE)
+  if(length(x) == 0L){
+    TRUE
   }else{
-    if(is.na(x)){
-      return(TRUE)
-    }else{
-      if(length(x) == 0L){
-        return(TRUE)
-      }else{
-        if(trimws(x) == ""){
-          return(TRUE)
-        }else{
-          return(FALSE)
-        }
-      }
-    }
+    is.na(x)
   }
 }
 
