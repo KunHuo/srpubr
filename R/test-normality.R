@@ -1,5 +1,5 @@
 shapiro_wilk <- function(data, group = NULL, varnames = NULL, digits = 3, ...){
-  normal_impl(df,
+  normality_impl(data,
               group = group,
               varnames = varnames,
               func = execute_sw,
@@ -19,7 +19,7 @@ execute_sw <- function(x){
              stringsAsFactors = FALSE)
 }
 
-.normality_impl <- function(data, group = NULL, varnames = NULL, func = NULL, digits = 3, ...){
+normality_impl <- function(data, group = NULL, varnames = NULL, func = NULL, digits = 3, ...){
 
   group    <- select_variable(data, group)
   varnames <- select_numeric(data, varnames)

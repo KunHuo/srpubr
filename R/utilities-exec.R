@@ -119,7 +119,7 @@ do_call <- function(what, ..., envir = parent.frame()){
 group_exec <- function(data, group = NULL, func = NULL, ..., out.list = FALSE, warning = TRUE){
 
   # # Group names from dplyr::group_by() functions
-  group.dplyr <- names(attr(df, "groups"))
+  group.dplyr <- names(attr(data, "groups"))
   group.dplyr <- group.dplyr[-length(group.dplyr)]
 
   if(is.null(group)){

@@ -9,3 +9,6 @@
 #' prognostic variables from patient-completed questionnaires. North Central
 #' Cancer Treatment Group. Journal of Clinical Oncology. 12(3):601-7, 1994.
 "lung"
+
+#' Labels for data of lung
+"lung.labels"

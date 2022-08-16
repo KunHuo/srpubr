@@ -132,7 +132,6 @@ tidy_labels <- function(data){
 }
 
 
-
 find_labels <- function(data, varname, code = NA){
   if(is_empty(code)){
     x <- varname
