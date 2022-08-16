@@ -66,6 +66,23 @@ list_rbind <- function(data,
 }
 
 
+#' Execute a function
+#'
+#' @param what either a function or a non-empty character string naming the
+#' function to be called.
+#' @param ... arguments for what.
+#' @param envir an environment within which to evaluate the call. This will be
+#' most useful if what is a character string and the arguments are symbols or quoted expressions.
+#'
+#' @return The result of the (evaluated) function call.
+#' @export
+do_call <- function(what, ..., envir = parent.frame()){
+  args <- list(...)
+  args <- flatten_list(args)
+  do.call(what, args = args, quote = FALSE, envir = envir)
+}
+
+
 group_exec <- function(data, group = NULL, func = NULL, ...){
   group <- select_variable(data, group)
   if(length(group) == 0L){

@@ -877,23 +877,6 @@ add_lables <- function(x, value){
 }
 
 
-#' Execute a function
-#'
-#' @param what either a function or a non-empty character string naming the
-#' function to be called.
-#' @param ... arguments for what.
-#' @param envir an environment within which to evaluate the call. This will be
-#' most useful if what is a character string and the arguments are symbols or quoted expressions.
-#'
-#' @return The result of the (evaluated) function call.
-#' @export
-do_call <- function(what, ..., envir = parent.frame()){
-  args <- list(...)
-  args <- flatten_list(args)
-  do.call(what, args = args, quote = FALSE, envir = envir)
-}
-
-
 #' Data frame transpose
 #'
 #' @param x a data frame.
@@ -1215,30 +1198,30 @@ delete_duplicate_values <- function(x){
 #'
 #' @examples
 #' df <- data.frame(x = c(NA, "x.y", "x.z", "z"))
-#' 
+#'
 #' separate2cols(data = df, varname = "x")
 #' separate2cols(data = df, varname = "x", keep = TRUE)
 #' separate2cols(data = df, varname = "x", keep = TRUE, into = c("A", "B"))
 separate2cols <- function(data, varname = NULL, into = NULL, sep = ".", fixed = TRUE, keep = FALSE, ...){
-  
+
   varname <- select_variable(data, varname, type = "name")
-  res <- regex_split(data[[varname]], pattern = sep, fixed = fixed) 
+  res <- regex_split(data[[varname]], pattern = sep, fixed = fixed)
   max <- max(sapply(res, length))
-  
+
   res <- lapply(res, \(x){ c(x, rep(NA, max - length(x))) })
   res <- do.call(rbind, res)
-  
+
   if(is.null(into)){
     new.names <- sprintf("%s.%d", varname, 1:ncol(res))
   }else{
     new.names <- into
   }
-  
+
   colnames(res) <- new.names
   res <- as.data.frame(res)
-  
+
   data <- append2(data, res, after = varname)
-  
+
   if(keep){
     data
   }else{
