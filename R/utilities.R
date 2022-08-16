@@ -827,11 +827,11 @@ data_type <- function(x, language = "en", detail = TRUE){
 
   if(language != "en"){
     switch(type,
-           Numeric = "\u6570\u503C\u53D8\u91CF",
-           Character = "\u5B57\u7B26\u53D8\u91CF",
-           Logical = "\u903B\u8F91\u53D8\u91CF",
-           Factor = "\u56E0\u5B50\u53D8\u91CF",
-           Ordered = "\u6709\u5E8F\u56E0\u5B50\u53D8\u91CF",
+           Numeric     = "\u6570\u503C\u53D8\u91CF",
+           Character   = "\u5B57\u7B26\u53D8\u91CF",
+           Logical     = "\u903B\u8F91\u53D8\u91CF",
+           Factor      = "\u56E0\u5B50\u53D8\u91CF",
+           Ordered     = "\u6709\u5E8F\u56E0\u5B50\u53D8\u91CF",
            Categorical = "\u5206\u7C7B\u53D8\u91CF"
     )
   }else{
