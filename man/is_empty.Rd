@@ -19,5 +19,4 @@ Is object an empty vector or NULL and NA?
 is_empty(NULL)
 is_empty(list())
 is_empty(list(NULL))
-is_empty(NA)
 }

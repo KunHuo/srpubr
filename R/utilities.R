@@ -678,13 +678,8 @@ seq2 <- function(from, to) {
 #' is_empty(NULL)
 #' is_empty(list())
 #' is_empty(list(NULL))
-#' is_empty(NA)
 is_empty <- function(x){
-  if(length(x) == 0L){
-    TRUE
-  }else{
-    is.na(x)
-  }
+  length(x) == 0L
 }
 
 
