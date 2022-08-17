@@ -2,15 +2,12 @@ shapiro_wilk <- function(data, group = NULL, varnames = NULL, digits = 3, ...){
   normality_impl(data,
               group = group,
               varnames = varnames,
-              func = execute_sw,
-              digits = digits,
-              label.stat = "W value",
-              table.title = "Shapiro-Wilk normality test",
-              table.note = "")
+              func = shapiro_wilk_impl,
+              digits = digits)
 }
 
 
-execute_sw <- function(x){
+shapiro_wilk_impl <- function(x){
   x <- x[stats::complete.cases(x)]
   res <- stats::shapiro.test(x)
   data.frame(n = length(x),
@@ -18,6 +15,7 @@ execute_sw <- function(x){
              p.value = res$p.value[[1]],
              stringsAsFactors = FALSE)
 }
+
 
 normality_impl <- function(data, group = NULL, varnames = NULL, func = NULL, digits = 3, ...){
 
@@ -31,10 +29,16 @@ normality_impl <- function(data, group = NULL, varnames = NULL, func = NULL, dig
 
   names(varnames) <- varnames
 
-  lapply(varnames, \(x){
+  out <- lapply(varnames, \(x){
     group_exec(data, group = group, \(d){
       do_call(func, d[[x]], ...)
     })
   })
-}
 
+  out <- list_rbind(out, collapse.names = TRUE)
+
+  out$statistic <- format_statistic(out$statistic, digits)
+  out$p.value   <- format_pvalue(out$p.value,      digits)
+
+  out
+}
