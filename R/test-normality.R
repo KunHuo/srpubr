@@ -10,10 +10,8 @@ shapiro_wilk <- function(data, group = NULL, varnames = NULL, digits = 3, ...){
 shapiro_wilk_impl <- function(x){
   x <- x[stats::complete.cases(x)]
   res <- stats::shapiro.test(x)
-  data.frame(n = length(x),
-             statistic = res$statistic[[1]],
-             p.value = res$p.value[[1]],
-             stringsAsFactors = FALSE)
+  data.frame(statistic = res$statistic[[1]],
+             p.value = res$p.value[[1]])
 }
 
 
@@ -35,10 +33,11 @@ normality_impl <- function(data, group = NULL, varnames = NULL, func = NULL, dig
     })
   })
 
-  out <- list_rbind(out, collapse.names = TRUE)
+  out <- list_rbind(out, collapse.names = FALSE)
 
   out$statistic <- format_statistic(out$statistic, digits)
   out$p.value   <- format_pvalue(out$p.value,      digits)
+
 
   out
 }
