@@ -133,7 +133,7 @@ tidy_labels <- function(data){
 
 
 find_labels <- function(data, varname, code = NA){
-  if(is_empty(code)){
+  if(is.na(code) | code == ""){
     x <- varname
   }else{
     x <- paste(varname, code, sep = "")
