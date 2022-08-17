@@ -105,9 +105,6 @@ add_lables <- function(data, ldata, col = 1){
   for(i in 1:nrow(data)){
     label <- find_labels(ldata, varname = tdata$term[i])
     if(!is_empty(label)){
-      print(data[[col]][i])
-      print("-------------------------------------------------")
-      print(label)
       data[[col]][i] <- regex_replace(string = data[[col]][i],
                                       pattern = trimws(data[[col]][i]),
                                       replacement = label)
