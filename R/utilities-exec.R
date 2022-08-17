@@ -1,6 +1,6 @@
 #' bind a list by rows
 #'
-#' @param data a data frame.
+#' @param data a list contain data frame.
 #' @param names.as.column names as a column, default TRUE..
 #' @param collapse.names collapse names, default FALSE.
 #' @param collapse.one.row collapse one row, default FALSE.
@@ -13,11 +13,27 @@ list_rbind <- function(data,
                        collapse.names = FALSE,
                        collapse.one.row = FALSE,
                        varname = "variable"){
+
   if(class(data) != "list"){
     stop("Data must be a list.", call. = FALSE)
   }
 
-  data <- data[!sapply(data, is.null)]
+  # Index for NULL or nrow < 1L in a data frame.
+  index <- sapply(data, \(d){
+    if(is_empty(d)){
+      TRUE
+    }else{
+     nrow(d) <1L
+    }
+  })
+
+  # If all elements are empty, return NULL.
+  if(all(index)){
+    return(NULL)
+  }
+
+  # Get non-null data.
+  data <- data[!index]
 
   NAMES <- names(data)
 
@@ -92,6 +108,7 @@ do_call <- function(what, ..., envir = parent.frame()){
 #' @param func a function to be applied to (usually data-frame) subsets of data.
 #' the function must be return a data frame.
 #' @param ... optional arguments to func.
+#' @param na.error logical；indicates whether to replace the result with NA if wrong, default TRUE.
 #' @param out.list logical; if FALSE, return a data frame, otherwise return a list.
 #' @param warning logical; whether to show error messages.
 #'
@@ -118,7 +135,7 @@ do_call <- function(what, ..., envir = parent.frame()){
 #' group_exec(mtcars, group = c("vs", "am"), func = \(d){
 #'   data.frame(mean = mean(d$mpg), min = min(d$mpg))
 #' })
-group_exec <- function(data, group = NULL, func = NULL, ..., out.list = FALSE, warning = TRUE){
+group_exec <- function(data, group = NULL, func = NULL, ..., na.error = TRUE, out.list = FALSE, warning = TRUE){
 
   # # Group names from dplyr::group_by() functions
   group.dplyr <- names(attr(data, "groups"))
@@ -139,25 +156,28 @@ group_exec <- function(data, group = NULL, func = NULL, ..., out.list = FALSE, w
   out <- lapply(sdat, \(d){
     tryCatch(do_call(func, d, ...), error = function(e) {
       if(warning){
-        cat("\n", e, "\n")
+        cat(e)
       }
       NULL
     })
   })
 
-  if(out.list){
-    out
-  }else{
+  if(na.error){
+    out <- handle_null(out)
+  }
+
+  if(!out.list){
     if(length(group) == 0L){
-      list_rbind(out, names.as.column = FALSE)
+      out <- list_rbind(out, names.as.column = FALSE)
     }else if(length(group) == 1L){
-      list_rbind(out, names.as.column = TRUE, varname = group)
+      out <- list_rbind(out, names.as.column = TRUE, varname = group)
     }else{
       out <- list_rbind(out, names.as.column = TRUE, varname = ".groups")
       out <- separate2cols(out, varname = ".groups", sep = "#", into = group)
-      out
     }
   }
+
+  out
 }
 
 handle_null <- function(data){

@@ -20,15 +20,19 @@
 #' @param varnames numeric variable names.
 #' @param group group variable name.
 #' @param language language, typically “en”, or "zh", default "en".
+#' @param table.number table number.
+#' @param labels a data frame contain the column of term, code, and label.
+#' @param ... unused arguments.
 #'
 #' @return
 #' identify_outliers() returns a data frame.
 #'
 #' is_outlier() and is_extreme() return logical vectors.
 #' @export
-identify_outliers <- function(data, group = NULL, varnames = NULL, language = NULL){
+identify_outliers <- function(data, group = NULL, varnames = NULL, language = NULL, table.number = NULL, labels = NULL, ...){
 
   language <- get_global_languange(language, default = "en")
+  labels   <- get_global_labels(labels)
 
   varnames <- select_numeric(data, varnames, type = "name")
   varnames <- setdiff(varnames, group)
@@ -51,13 +55,9 @@ identify_outliers <- function(data, group = NULL, varnames = NULL, language = NU
   }
 
   out <- lapply(varnames, function(varname){
-    if(is.null(group)){
+    res <- group_exec(data, group = group, \(d){
       exec(data, varname)
-    }else{
-      sdata <- split.data.frame(data, f = data[[group]])
-      res <- lapply(sdata, function(d){ exec(data = d, varname ) })
-      list_rbind(res, varname = "group")
-    }
+    })
   })
 
   out <- list_rbind(out, collapse.names = FALSE)
@@ -69,19 +69,29 @@ identify_outliers <- function(data, group = NULL, varnames = NULL, language = NU
   }
 
   out[[1]] <- delete_duplicate_values(out[[1]])
-
   out <- tibble::as_tibble(out)
 
-  attr(out, "title") <- "Identify univariate outliers using boxplot methods"
-  attr(out, "note")  <- paste("Note: Values above Q3 + 1.5\u00D7IQR or below Q1 - 1.5\u00D7IQR",
-                        "are considered as outliers. Values above Q3 + 3\u00D7IQR or",
-                        "below Q1 - 3\u00D7IQR are considered as extreme points (or",
-                        "extreme outliers). Q1 and Q3 are the first and third",
-                        "quartile, respectively. IQR is the interquartile range",
-                        "(IQR = Q3 - Q1).", sep = " ")
+  # Set labels
+  if(!is.null(labels)){
+    out <- add_lables(out, ldata = labels, col = 1)
+    group.labels <- sapply(group, \(x){
+      l <- find_labels(data = tidy_labels(labels), varname = x)
+      ifelse(is_empty(l), x, l)
+    })
+    names(out)[2:(2+length(group) - 1)] <- group.labels
+  }
+
+  # set names
+  names(out)[1] <- string_variable(language)
+  names(out)[names(out) == ".row.number"] <- ifelse(language == "en", "Row number", "\u884c\u53f7")
+  names(out)[names(out) == "value"]       <- ifelse(language == "en", "Value",      "\u6570\u503c")
+  names(out)[names(out) == "outlier"]     <- ifelse(language == "en", "Outlier",    "\u662f\u5426\u5f02\u5e38\u503c")
+  names(out)[names(out) == "extreme"]     <- ifelse(language == "en", "Extreme",    "\u662f\u5426\u6781\u7aef\u503c")
+
+  attr(out, "title") <- string_title_outlier(language, table.number)
+  attr(out, "note")  <- string_outlier_note(language)
 
   class(out) <- c("srp.outlier", class(out))
-
   out
 }
 
@@ -94,8 +104,36 @@ identify_outliers <- function(data, group = NULL, varnames = NULL, language = NU
 #' @keywords internal
 #'
 #' @export
-print.srp.outlier<- function(x, ...){
+print.srp.outlier <- function(x, ...){
   print_booktabs(x, adj = c("left"), ...)
+}
+
+
+string_title_outlier <- function(language, number = NULL){
+  title <- switch(language,
+                  en = "Identify univariate outliers using boxplot methods",
+                  zh = "\u7bb1\u7ebf\u56fe\u8bc6\u522b\u5f02\u5e38\u503c")
+  if(!is.null(number)){
+    title <- switch(language,
+                    en = paste(sprintf("Table %d:", number), title, sep = "  "),
+                    zh = paste(sprintf("\u8868%d", number),  title, sep = "  "))
+  }
+  title
+}
+
+
+string_outlier_note <- function(language){
+  english <- paste("Note: Values above Q3 + 1.5\u00D7IQR or below Q1 - 1.5\u00D7IQR",
+                   "are considered as outliers. Values above Q3 + 3\u00D7IQR or",
+                   "below Q1 - 3\u00D7IQR are considered as extreme points (or",
+                   "extreme outliers). Q1 and Q3 are the first and third",
+                   "quartile, respectively. IQR is the interquartile range",
+                   "(IQR = Q3 - Q1).", sep = " ")
+  chinese <-  ""
+
+  switch(language,
+         en = english,
+         zh = chinese)
 }
 
 

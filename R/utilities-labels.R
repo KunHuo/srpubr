@@ -132,11 +132,15 @@ tidy_labels <- function(data){
 }
 
 
+# If can not find return NULL.
 find_labels <- function(data, varname, code = NA){
   if(is.na(code) | code == ""){
     x <- varname
   }else{
     x <- paste(varname, code, sep = "")
+  }
+  if(is_empty(which(data$term == x))){
+    return(NULL)
   }
   data$label[which(data$term == x)]
 }
