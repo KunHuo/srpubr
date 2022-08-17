@@ -64,7 +64,11 @@ identify_outliers <- function(data, group = NULL, varnames = NULL, language = NU
   out <- out[!is.na(out$outlier) & out$outlier, ]
 
   if(nrow(out) < 1L){
-    cat("\nNo outliers.\n\n")
+    if(language == "en"){
+      cat("\nNo outliers.\n\n")
+    }else{
+      cat("\n\u6ca1\u6709\u5f02\u5e38\u503c\u3002\n\n")
+    }
     return(invisible(NULL))
   }
 
@@ -74,11 +78,13 @@ identify_outliers <- function(data, group = NULL, varnames = NULL, language = NU
   # Set labels
   if(!is.null(labels)){
     out <- add_lables(out, ldata = labels, col = 1)
-    group.labels <- sapply(group, \(x){
-      l <- find_labels(data = tidy_labels(labels), varname = x)
-      ifelse(is_empty(l), x, l)
-    })
-    names(out)[2:(2+length(group) - 1)] <- group.labels
+    if(!is_empty(group)){
+      group.labels <- sapply(group, \(x){
+        l <- find_labels(data = tidy_labels(labels), varname = x)
+        ifelse(is_empty(l), x, l)
+      })
+      names(out)[2:(2+length(group) - 1)] <- group.labels
+    }
   }
 
   # set names
@@ -129,7 +135,18 @@ string_outlier_note <- function(language){
                    "extreme outliers). Q1 and Q3 are the first and third",
                    "quartile, respectively. IQR is the interquartile range",
                    "(IQR = Q3 - Q1).", sep = " ")
-  chinese <-  ""
+  chinese <-  paste("\u6ce8\uff1a\u6570\u636e\u5728\u0020\u0051\u0031\u0020\u002d\u0020",
+               "\u0031\u002e\u0035\u00d7\u0049\u0051\u0052\u0020\u007e\u0020\u0051",
+               "\u0033\u0020\u002b\u0020\u0031\u002e\u0035\u00d7\u0049\u0051\u0052",
+               "\u8303\u56f4\u5185\u5b9a\u4e49\u4e3a\u5f02\u5e38\u503c\uff0c",
+               "\u5728\u0020\u0051\u0031\u0020\u002d\u0020",
+               "\u0033\u00d7\u0049\u0051\u0052\u0020\u007e\u0020\u0051\u0033\u0020",
+               "\u002b\u0020\u0033\u00d7\u0049\u0051\u0052\u8303\u56f4\u5185\u5b9a",
+               "\u4e49\u4e3a\u6781\u7aef\u5f02\u5e38\u503c\u3002\u0051\u0031\u0020",
+               "\u548c\u0020\u0051\u0033\u0020\u5206\u522b\u4e3a\u7b2c\u4e00\u548c",
+               "\u7b2c\u4e09\u56db\u5206\u4f4d\u6570\uff0c\u0049\u0051\u0052\u4e3a",
+               "\u56db\u5206\u4f4d\u6570\u95f4\u8ddd\u0020\u0028\u0049\u0051\u0052",
+               "\u0020\u003d\u0020\u0051\u0033\u0020\u002d\u0020\u0051\u0031\u0029\u3002", sep = "")
 
   switch(language,
          en = english,
