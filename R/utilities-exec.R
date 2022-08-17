@@ -27,7 +27,9 @@ list_rbind <- function(data,
 
   collapse <- function(d, nm){
     d[[1]] <- paste0("    ", d[[1]])
-    rbind(c(nm, rep(NA, ncol(d) - 1)), d)
+    res <- rbind(c(rep(NA, ncol(d))), d)
+    res[1, 1] <- nm
+    res
   }
 
   collapse_column <- function(d, nm){
@@ -156,4 +158,27 @@ group_exec <- function(data, group = NULL, func = NULL, ..., out.list = FALSE, w
       out
     }
   }
+}
+
+handle_null <- function(data){
+  if(all(sapply(data, is_empty))){
+    return(data)
+  }
+
+  if(all(sapply(data, \(x) !is_empty(x)))){
+    return(data)
+  }
+
+  index <- which(sapply(res, is_empty) == FALSE)[1]
+
+  lapply(data, \(d){
+    if(is_empty(d)){
+      # Create empty data frame fill with NA
+      x <- rep(NA, length(data[[index]]))
+      names(x) <- names(data[[index]])
+      as.data.frame(as.list(x))
+    }else{
+      d
+    }
+  })
 }
