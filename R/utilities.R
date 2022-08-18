@@ -987,3 +987,28 @@ separate2cols <- function(data, varname = NULL, into = NULL, sep = ".", fixed = 
     data[, -which(names(data) == varname), drop = FALSE]
   }
 }
+
+wrap_output <- function(output = NULL, class = NULL,...){
+  if(is_empty(output)){
+    output <- data.frame()
+  }
+
+  args <- attr(output, "args")
+  args <- c(list(...), args)
+
+  output <- tibble::as_tibble(output)
+  class(output) <- c(class, class(output))
+
+  if(is_empty(args)){
+    attr(output, "args") <- NULL
+  }else{
+    attr(output, "args") <- args
+  }
+
+  output
+}
+
+
+extract_args <- function(data, key){
+  attr(data, "args")[[key]]
+}
