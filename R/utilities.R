@@ -988,18 +988,23 @@ separate2cols <- function(data, varname = NULL, into = NULL, sep = ".", fixed = 
   }
 }
 
-wrap_output <- function(output = NULL, class = NULL, title = NULL, note = NULL, path = NULL, empty.message = NULL, ...){
+wrap_output <- function(output = NULL, class = NULL,...){
   if(is_empty(output)){
     output <- data.frame()
   }
-  
+
+  args <- attr(output, "args")
+  args <- c(list(...), args)
+
   output <- tibble::as_tibble(output)
   class(output) <- c(class, class(output))
-  
-  attr(output, "args") <- c(list(title = title, 
-                                 note = note, 
-                                 path = path, 
-                                 empty.message = empty.message), list(...))
+
+  if(is_empty(args)){
+    attr(output, "args") <- NULL
+  }else{
+    attr(output, "args") <- args
+  }
+
   output
 }
 
