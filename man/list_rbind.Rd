@@ -13,7 +13,7 @@ list_rbind(
 )
 }
 \arguments{
-\item{data}{a data frame.}
+\item{data}{a list contain data frame.}
 
 \item{names.as.column}{names as a column, default TRUE..}
 

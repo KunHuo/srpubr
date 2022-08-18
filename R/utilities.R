@@ -1012,3 +1012,24 @@ wrap_output <- function(output = NULL, class = NULL,...){
 extract_args <- function(data, key){
   attr(data, "args")[[key]]
 }
+
+
+#' Print class of 'srp'
+#'
+#' @param x an object.
+#' @param adj adjustment.
+#' @param ... passed to print.
+#'
+#' @keywords internal
+#'
+#' @export
+print.srp <- function(x, adj = "left", ...){
+
+  if(is_empty(x)){
+    cat(extract_args(x, key = "empty"))
+  }else{
+    attr(x, "title") <- extract_args(x, key = "title")
+    attr(x, "note")  <- extract_args(x, key = "note")
+    print_booktabs(x, adj = adj, ...)
+  }
+}

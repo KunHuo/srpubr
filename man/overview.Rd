@@ -4,7 +4,7 @@
 \alias{overview}
 \title{Overview a data frame}
 \usage{
-overview(data, digits = 2, ...)
+overview(data, digits = 2, language = NULL, labels = NULL, ...)
 }
 \arguments{
 \item{data}{a data frame.}

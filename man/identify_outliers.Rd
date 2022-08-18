@@ -6,7 +6,15 @@
 \alias{is_extreme}
 \title{Identify univariate outliers}
 \usage{
-identify_outliers(data, group = NULL, varnames = NULL, language = NULL)
+identify_outliers(
+  data,
+  group = NULL,
+  varnames = NULL,
+  language = NULL,
+  table.number = NULL,
+  labels = NULL,
+  ...
+)
 
 is_outlier(x, coef = 1.5)
 
@@ -20,6 +28,12 @@ is_extreme(x)
 \item{varnames}{numeric variable names.}
 
 \item{language}{language, typically “en”, or "zh", default "en".}
+
+\item{table.number}{table number.}
+
+\item{labels}{a data frame contain the column of term, code, and label.}
+
+\item{...}{unused arguments.}
 
 \item{x}{a numeric vector.}
 
