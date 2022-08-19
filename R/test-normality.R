@@ -40,6 +40,9 @@ normality_impl <- function(data, group = NULL, varnames = NULL, func = NULL, dig
 
   names(varnames) <- varnames
 
+  format_baseline(data, varnames) |>
+    print()
+
   out <- lapply(varnames, \(x){
     group_exec(data, group = group, \(d){
       do_call(func, d[[x]], ...)

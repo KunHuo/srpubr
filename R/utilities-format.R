@@ -128,13 +128,45 @@ format_signif_start <- function(pvalues, digits = 3){
 #'
 #' @return a data frame.
 #' @export
-format_variable <- function(data,
+format_regression <- function(data,
                             varnames = names(data),
                             fold = FALSE,
                             space = 4,
                             sep = " vs. ",
                             add.first = NULL,
                             add.last = NULL){
+
+  extract_levels <- function(x){
+    if(is.character(x)){
+      x <- as.factor(x)
+    }
+    levels(x)
+  }
+
+  style_factor1 <- function(varname, levels, label, space, sep) {
+    if (length(levels) <= 2L) {
+      variable <- sprintf("%s (%s%s%s)", label, levels[2], sep, levels[1])
+      term <- paste0(varname, levels[2])
+      data.frame(term = term, varname = varname, ref = FALSE, variable = variable, stringsAsFactors = FALSE)
+    } else{
+      term <- paste0(varname, levels[-1])
+      term <- c(varname, term)
+      variable <- paste(levels[-1], levels[1], sep = sep)
+      variable <- paste0(space, variable)
+      variable <- c(label, variable)
+      data.frame(term = term, varname = varname, ref = FALSE, variable = variable, stringsAsFactors = FALSE)
+    }
+  }
+
+  style_factor2 <- function(varname, levels, label, space) {
+    term <- paste0(varname, levels)
+    term <- c(varname, term)
+    variable <- paste0(space, levels)
+    variable <- c(label, variable)
+    ref <- c(FALSE, TRUE, rep(FALSE, length(levels) - 1))
+    data.frame(term = term, varname = varname, ref = ref,  variable = variable, stringsAsFactors = FALSE)
+  }
+
   space <- create_space(space)
   sep <- sprintf("%s", sep)
   execute <-  function(varname){
@@ -183,43 +215,143 @@ format_variable <- function(data,
 }
 
 
+
+format_baseline <- function(data, varnames = names(data), methods = NULL, nonnormal.vars = NULL, method.nonnormal = NULL) {
+
+  CONSTANT.SPACE <- "\u0020\u0020\u0020"
+
+  # Foramt numeric
+  foramt_numeric <- function(varname, label) {
+    if(varname %in% nonnormal.vars){
+      # If the described method is not set, term column and varname column will return
+      # the variable name, but the variable column will return the label if obtained.
+      if (is.null(method.nonnormal)) {
+        return(data.frame(term = varname, varname = varname, variable = label, stringsAsFactors = FALSE))
+      }
+
+      # If there is a missing value, add the name of "miss" to method.nonnormal,
+      # Due to missing values are always calculated.
+      if (any(is.na(data[[varname]]))) {
+        method.nonnormal <- c(method.nonnormal, "miss")
+      }
+
+      if(length(method.nonnormal) == 1L){
+        # term <- paste0(varname, method.nonnormal)
+        data.frame(term = varname, varname = varname, variable = label, stringsAsFactors = FALSE)
+
+      }else{
+        term <- paste0(varname, method.nonnormal)
+        term <- c(varname, term)
+
+        # Change method's label
+        method.nonnormal <- desc_method_label(method.nonnormal)
+
+        variable <- paste0(CONSTANT.SPACE, method.nonnormal)
+        variable <- c(label, variable)
+        data.frame(term = term, varname = varname, variable = variable, stringsAsFactors = FALSE)
+      }
+
+    }else{
+      # If the described method is not set, term column and varname column will return
+      # the variable name, but the variable column will return the label if obtained.
+      if (is.null(methods)) {
+        return(data.frame(term = varname, varname = varname, variable = label, stringsAsFactors = FALSE))
+      }
+
+      # If there is a missing value, add the name of "miss" to methods,
+      # Due to missing values are always calculated.
+      if (any(is.na(data[[varname]]))) {
+        methods <- c(methods, "miss")
+      }
+
+      if(length(methods) == 1L){
+        # term <- paste0(varname, methods)
+        data.frame(term = varname, varname = varname, variable = label, stringsAsFactors = FALSE)
+      }else{
+        term <- paste0(varname, methods)
+        term <- c(varname, term)
+
+        # Change method's label
+        methods <- desc_method_label(methods)
+
+        variable <- paste0(CONSTANT.SPACE, methods)
+        variable <- c(label, variable)
+        data.frame(term = term, varname = varname,variable = variable, stringsAsFactors = FALSE)
+      }
+    }
+  }
+
+  # Foramt factor
+  # the returned format by variable is as follows:
+  # varname
+  #    level A
+  #    level B
+  foramt_factor <- function(varname, label) {
+    levels <- levels(data[[varname]])
+    term   <- c(varname, paste0(varname, levels))
+    variable <- c(label, paste0(CONSTANT.SPACE, levels))
+    data.frame(term = term, varname = varname, variable = variable, stringsAsFactors = FALSE)
+  }
+
+  # Format a single variable
+  foramt_execute <- function(varname) {
+    # Get the label of the variable, or return the variable name if it cannot be obtained,
+    # and then assign it to the variable column.
+    label <- get_label(data, varname)
+
+    # Only numeric and factor variables are formatted. String variables need to be
+    # manually converted to factor variables. Other types of variables are not supported.
+    if (is.numeric(data[[varname]])) {
+      foramt_numeric(varname, label)
+    } else if (is.factor(data[[varname]])) {
+      foramt_factor(varname, label)
+    }
+  }
+
+  # Returns a tibble containing the term column, the varname column, and the variable column.
+  # Among them, the term column is unique and is used for data merge;
+  # the varnmame column is the variable name;
+  # the variable column is the final result displayed.
+  out <- lapply(varnames, foramt_execute)
+  do.call(rbind, out)
+}
+
+
+desc_method_label <- function(methods){
+  method.string <- c("n", "miss",
+                     "mean", "sd", "var", "median", "IQR", "min", "max",
+                     "skew", "kurt",
+                     "mean_sd","mean_sd2", "mean_sd3",
+                     "median_IQR", "median_IQR2", "median_IQR3","median_IQR4",
+                     "median_range", "median_range2", "median_range3")
+
+  method.label <- c("n", "missing",
+                    "mean", "SD", "var","median", "IQR", "min", "max",
+                    "skewness", "kurtosis",
+                    "mean\u00b1SD", "mean (SD)", "mean (\u00b1SD)",
+                    "median (IQR)", "median (IQR)", "median (IQR)", "median (IQR)",
+                    "median (range)", "median (range)", "median (range)")
+
+  sapply(methods, function(m){
+    label <- method.label[match(m, method.string)]
+    if(is.na(label)){
+      label <- m
+    }
+    label
+  }, simplify = TRUE)
+}
+
+
+get_label <- function(df, varname) {
+  label <- attr(df[[varname]], "label")
+  if (is.null(label)) {
+    varname
+  } else {
+    label
+  }
+}
+
+
 create_space <- function(n){
   strrep(" ", n)
 }
-
-
-extract_levels <- function(x){
-  if(is.character(x)){
-    x <- as.factor(x)
-  }
-  levels(x)
-}
-
-
-style_factor1 <- function(varname, levels, label, space, sep) {
-  if (length(levels) <= 2L) {
-    variable <- sprintf("%s (%s%s%s)", label, levels[2], sep, levels[1])
-    term <- paste0(varname, levels[2])
-    data.frame(term = term, varname = varname, ref = FALSE, variable = variable, stringsAsFactors = FALSE)
-  } else{
-    term <- paste0(varname, levels[-1])
-    term <- c(varname, term)
-    variable <- paste(levels[-1], levels[1], sep = sep)
-    variable <- paste0(space, variable)
-    variable <- c(label, variable)
-    data.frame(term = term, varname = varname, ref = FALSE, variable = variable, stringsAsFactors = FALSE)
-  }
-}
-
-
-style_factor2 <- function(varname, levels, label, space) {
-  term <- paste0(varname, levels)
-  term <- c(varname, term)
-  variable <- paste0(space, levels)
-  variable <- c(label, variable)
-  ref <- c(FALSE, TRUE, rep(FALSE, length(levels) - 1))
-  data.frame(term = term, varname = varname, ref = ref,  variable = variable, stringsAsFactors = FALSE)
-}
-
-
-
