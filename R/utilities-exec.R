@@ -189,7 +189,7 @@ handle_null <- function(data){
     return(data)
   }
 
-  index <- which(sapply(res, is_empty) == FALSE)[1]
+  index <- which(sapply(data, is_empty) == FALSE)[1]
 
   lapply(data, \(d){
     if(is_empty(d)){
