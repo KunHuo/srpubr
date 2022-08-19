@@ -5,6 +5,8 @@
 #' @param collapse.names collapse names, default FALSE.
 #' @param collapse.one.row collapse one row, default FALSE.
 #' @param varname variable name.
+#' @param labels labels.
+#' @param dup.var a logical; delete duplicate variable names, default FALSE.
 #'
 #' @return a data frame.
 #' @export
@@ -12,7 +14,9 @@ list_rbind <- function(data,
                        names.as.column = TRUE,
                        collapse.names = FALSE,
                        collapse.one.row = FALSE,
-                       varname = "variable"){
+                       varname = "variable",
+                       dup.var = FALSE,
+                       labels = NULL){
 
   if(class(data) != "list"){
     stop("Data must be a list.", call. = FALSE)
@@ -26,6 +30,7 @@ list_rbind <- function(data,
      nrow(d) <1L
     }
   })
+
 
   # If all elements are empty, return NULL.
   if(all(index)){
@@ -64,6 +69,9 @@ list_rbind <- function(data,
   }
 
   out <- Map(function(d, nm){
+
+    nm <- find_labels(labels, varname = nm, defalut = nm)
+
     if(names.as.column){
       if(collapse.names){
         collapse_column(d, nm)
@@ -79,6 +87,9 @@ list_rbind <- function(data,
   row.names(out) <- NULL
   if(names.as.column){
     names(out)[1] <- varname
+    if(dup.var){
+      out[[1]] <- delete_duplicate_values(out[[1]])
+    }
   }
   out
 }
@@ -108,7 +119,7 @@ do_call <- function(what, ..., envir = parent.frame()){
 #' @param func a function to be applied to (usually data-frame) subsets of data.
 #' the function must be return a data frame.
 #' @param ... optional arguments to func.
-#' @param na.error logical；indicates whether to replace the result with NA if wrong, default TRUE.
+#' @param labels labels.
 #' @param out.list logical; if FALSE, return a data frame, otherwise return a list.
 #' @param warning logical; whether to show error messages.
 #'
@@ -135,7 +146,7 @@ do_call <- function(what, ..., envir = parent.frame()){
 #' group_exec(mtcars, group = c("vs", "am"), func = \(d){
 #'   data.frame(mean = mean(d$mpg), min = min(d$mpg))
 #' })
-group_exec <- function(data, group = NULL, func = NULL, ..., na.error = TRUE, out.list = FALSE, warning = TRUE){
+group_exec <- function(data, group = NULL, func = NULL, ..., labels = NULL, out.list = FALSE, warning = TRUE){
 
   # # Group names from dplyr::group_by() functions
   group.dplyr <- names(attr(data, "groups"))
@@ -156,49 +167,42 @@ group_exec <- function(data, group = NULL, func = NULL, ..., na.error = TRUE, ou
   out <- lapply(sdat, \(d){
     tryCatch(do_call(func, d, ...), error = function(e) {
       if(warning){
-        cat(e)
+        print(e)
       }
       NULL
     })
   })
 
-  if(na.error){
-    out <- handle_null(out)
+  if(all(sapply(out, is_empty))){
+    return(NULL)
   }
 
   if(!out.list){
     if(length(group) == 0L){
       out <- list_rbind(out, names.as.column = FALSE)
-    }else if(length(group) == 1L){
-      out <- list_rbind(out, names.as.column = TRUE, varname = group)
     }else{
-      out <- list_rbind(out, names.as.column = TRUE, varname = ".groups")
-      out <- separate2cols(out, varname = ".groups", sep = "#", into = group)
+      group.labels <- sapply(group, \(x){
+        find_labels(labels, varname = x, defalut = x)
+      })
+
+      if(length(group) == 1L){
+        out <- list_rbind(out, names.as.column = TRUE, varname = group)
+      }else{
+        out <- list_rbind(out, names.as.column = TRUE, varname = ".groups")
+        out <- separate2cols(out, varname = ".groups", sep = "#", into = group)
+      }
+
+      out[group] <- Map(function(x, g){
+        l0 <- unique(x)
+        l1 <- sapply(l0, \(i) find_labels(labels, varname = g, code = i, defalut = i))
+        l1[match(x, l0)]
+      }, out[group], group)
+
+      for(i in seq_along(group.labels)){
+        names(out)[names(out) == group[i]] <- group.labels[i]
+      }
+      out
     }
   }
-
   out
-}
-
-handle_null <- function(data){
-  if(all(sapply(data, is_empty))){
-    return(data)
-  }
-
-  if(all(sapply(data, \(x) !is_empty(x)))){
-    return(data)
-  }
-
-  index <- which(sapply(data, is_empty) == FALSE)[1]
-
-  lapply(data, \(d){
-    if(is_empty(d)){
-      # Create empty data frame fill with NA
-      x <- rep(NA, length(data[[index]]))
-      names(x) <- names(data[[index]])
-      as.data.frame(as.list(x))
-    }else{
-      d
-    }
-  })
 }

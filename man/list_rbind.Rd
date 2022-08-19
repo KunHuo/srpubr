@@ -9,7 +9,9 @@ list_rbind(
   names.as.column = TRUE,
   collapse.names = FALSE,
   collapse.one.row = FALSE,
-  varname = "variable"
+  varname = "variable",
+  dup.var = FALSE,
+  labels = NULL
 )
 }
 \arguments{
@@ -22,6 +24,10 @@ list_rbind(
 \item{collapse.one.row}{collapse one row, default FALSE.}
 
 \item{varname}{variable name.}
+
+\item{dup.var}{a logical; delete duplicate variable names, default FALSE.}
+
+\item{labels}{labels.}
 }
 \value{
 a data frame.

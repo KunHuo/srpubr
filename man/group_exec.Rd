@@ -9,7 +9,7 @@ group_exec(
   group = NULL,
   func = NULL,
   ...,
-  na.error = TRUE,
+  labels = NULL,
   out.list = FALSE,
   warning = TRUE
 )
@@ -24,7 +24,7 @@ the function must be return a data frame.}
 
 \item{...}{optional arguments to func.}
 
-\item{na.error}{logical；indicates whether to replace the result with NA if wrong, default TRUE.}
+\item{labels}{labels.}
 
 \item{out.list}{logical; if FALSE, return a data frame, otherwise return a list.}
 

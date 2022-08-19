@@ -17,11 +17,20 @@ shapiro_wilk <- function(data, group = NULL, varnames = NULL, language = NULL, l
 }
 
 
-shapiro_wilk_impl <- function(x){
+shapiro_wilk_impl <- function(x, name, ...){
+
   x <- x[stats::complete.cases(x)]
-  res <- stats::shapiro.test(x)
-  data.frame(statistic = res$statistic[[1]],
-             p.value = res$p.value[[1]])
+
+  tryCatch(
+    expr = {
+      res <- stats::shapiro.test(x)
+      data.frame(statistic = res$statistic[[1]], p.value = res$p.value[[1]])
+    }, error = function(e){
+      cat(name, ": ")
+      print(e)
+      data.frame(statistic = -1, p.value = -1)
+    }
+  )
 }
 
 
@@ -35,37 +44,27 @@ normality_impl <- function(data, group = NULL, varnames = NULL, func = NULL, dig
   labels   <- get_global_labels(labels)
 
   if(length(varnames) == 0L){
-    return(invisible(NULL))
+    return(NULL)
   }
 
   names(varnames) <- varnames
 
-  format_baseline(data, varnames) |>
-    print()
-
   out <- lapply(varnames, \(x){
     group_exec(data, group = group, \(d){
-      do_call(func, d[[x]], ...)
-    }, na.error = TRUE)
+      do_call(func, d[[x]], name = x, ...)
+    }, labels = labels)
   })
 
-  out <- list_rbind(out, collapse.names = FALSE)
+  if(all(sapply(out, is_empty))){
+    return(NULL)
+  }
+
+  collapse.names <- ifelse(length(group) == 1L, TRUE, FALSE)
+  dup.var <- !collapse.names
+  out <- list_rbind(out, collapse.names = collapse.names, labels = labels, dup.var = dup.var)
 
   out$statistic <- format_statistic(out$statistic, digits)
   out$p.value   <- format_pvalue(out$p.value,      digits)
-
-
-  # Set labels
-  if(!is.null(labels)){
-    out <- add_lables(out, ldata = labels, col = 1)
-    if(!is_empty(group)){
-      group.labels <- sapply(group, \(x){
-        l <- find_labels(data = tidy_labels(labels), varname = x)
-        ifelse(is_empty(l), x, l)
-      })
-      names(out)[2:(2+length(group) - 1)] <- group.labels
-    }
-  }
 
   names(out)[which(names(out) == "variable")]  <- dictionary(key = "variable", language)
   names(out)[which(names(out) == "p.value")]   <- dictionary(key = "p.value",  language)

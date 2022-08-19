@@ -40,7 +40,7 @@ format_statistic <- function(x, digits) {
     if (is.na(i)) {
       NA
     } else {
-      sprintf(fmt = fmt, i)
+      ifelse(i == -1, "NA", sprintf(fmt = fmt, i))
     }
   })
 
@@ -71,7 +71,7 @@ format_pvalue <- function(x, digits) {
     if(is.na(i)){
       NA
     }else{
-      sprintf(fmt = fmt, i)
+      ifelse(i == -1, "NA", sprintf(fmt = fmt, i))
     }
   })
   smallPString <- paste0("<0.", paste0(rep("0", digits - 1), collapse = ""), "1")
