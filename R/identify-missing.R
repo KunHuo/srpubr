@@ -74,9 +74,6 @@ identify_missing <- function(data,
     }
 
 
-    # res <- rename(res,
-    #               variable = dictionary("variable", language))
-
     names(res)[names(res) == "variable"] <- string_variable(language)
     names(res)[names(res) == "type"]     <- string_missing_type(language)
     names(res)[names(res) == "n"]        <- string_missing_total(language)

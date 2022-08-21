@@ -93,7 +93,7 @@ add_note <- function(x, value = NULL, append = TRUE){
 add_lables <- function(data, ldata, col = 1){
   tdata <- extract_terms(data, which = col)
   for(i in 1:nrow(data)){
-    label <- find_labels(ldata, varname = tdata$term[i])
+    label <- find_labels(ldata, varname = tdata$.term[i])
     if(!is_empty(label)){
       data[[col]][i] <- regex_replace(string = data[[col]][i],
                                       pattern = trimws(data[[col]][i]),
@@ -108,10 +108,7 @@ tidy_labels <- function(data = NULL){
   if(is_empty(data)){
     return(NULL)
   }
-
-  if("tidy.labels" %in% class(data)){
-    return(data)
-  }
+  term0 <- data[[1]]
 
   data[, 1] <- lapply(data[, 1], function(v) {
     for (i in seq_along(v)) {
@@ -123,13 +120,16 @@ tidy_labels <- function(data = NULL){
     }
     v
   })
-  names(data) <- c("term", "code", "label")
-  data$term <- ifelse(is.na(data$code),
-                            data$term,
-                            paste(data$term, data$code, sep = ""))
+  names(data) <- c(".varname", ".code", ".label")
+  data <- tibble::add_column(data, .term = data[[1]], .after = 0)
 
-
-  class(data) <- c("tidy.labels", class(data))
+  for(i in 1:nrow(data)){
+    if(is.na(term0[i])){
+      if(!is.na(data$.code[i])){
+        data$.term[i] <- paste0(data$.term[i], data$.code[i])
+      }
+    }
+  }
   data
 }
 
@@ -148,9 +148,9 @@ find_labels <- function(data, varname, code = NA, defalut = NULL){
     x <- paste(varname, code, sep = "")
   }
 
-  if(is_empty(which(as.character(data$term) == as.character(x)))){
+  if(is_empty(which(as.character(data$.term) == as.character(x)))){
     return(defalut)
   }
 
-  data$label[which(as.character(data$term )== as.character(x))]
+  data$.label[which(as.character(data$.term )== as.character(x))]
 }
