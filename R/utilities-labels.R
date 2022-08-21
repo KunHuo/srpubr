@@ -6,47 +6,38 @@ extract_terms <- function(x, which = 1){
   term <- vector(length = length(variables))
   varname <- vector(length = length(variables))
   code <- rep(NA, length(variables))
+
   for(i in seq_along(variables)){
+
     if(regex_detect(variables[i], pattern = "^\\s")){
-      tmp <- regex_extract(rev(variables[1:i]), pattern = "^\\S*")
+      tmp <- rev(variables[1:i])
+      tmp <- regex_extract(tmp, pattern = "^\\S.*")
       tmp <- tmp[tmp != ""][1]
       term[i] <- paste0(tmp, trimws(variables[i]))
       code[i] <- trimws(variables[i])
       varname[i] <- tmp
+
     }else{
       term[i] <- variables[i]
       varname[i] <- variables[i]
     }
   }
-  data.frame(term = term, code = code,  varname = varname)
+
+  data.frame(.term = term, .code = code,  .varname = varname)
 }
 
 
 add_terms_column <- function(x, which = 1){
   terms <- extract_terms(x, which = which)
   terms <- terms[, 1, drop = FALSE]
-  x.class <- class(x)
-  x.title <- attr(x, "title")
-  x.note <- attr(x, "note")
-  x <- cbind(terms, x)
-  class(x) <- x.class
-  attr(x, "title") <- x.title
-  attr(x, "note") <- x.note
-  x
+  tibble::add_column(x, terms, .after = 0)
 }
 
 
 add_varnames_column <- function(x, which = 1){
   terms <- extract_terms(x, which = which)
   terms <- terms[, 3, drop = FALSE]
-  x.class <- class(x)
-  x.title <- attr(x, "title")
-  x.note <- attr(x, "note")
-  x <- cbind(terms, x)
-  class(x) <- x.class
-  attr(x, "title") <- x.title
-  attr(x, "note") <- x.note
-  x
+  tibble::add_column(x, terms, .after = 0)
 }
 
 
