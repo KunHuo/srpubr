@@ -2,6 +2,8 @@
 #'
 #' @param data a data frame.
 #' @param digits digits, default 2.
+#' @param language language language, typically “en”, or "zh", default "en".
+#' @param labels a data frame contain the column of term, code, and label.
 #' @param ... unused.
 #'
 #' @return a data frame.
@@ -20,7 +22,7 @@ overview <- function(data, digits = 2, language = NULL, labels = NULL, ...){
     dv <- data[[x]]
 
     type   <- class(dv)[1]
-    unique <- length(unique(na.omit(dv)))
+    unique <- length(unique(stats::na.omit(dv)))
     miss   <- sum(is.na(dv))
     valid  <- length(dv) - miss
 

@@ -729,7 +729,7 @@ merge_table <- function(x, y, name.x = NULL, name.y = NULL, name.x.index = 2, na
   x <- add_terms_column(x, which = 1)
   y <- add_terms_column(y, which = 1)
   y <- y[, -2, drop = FALSE]
-  out <- merge_left(x, y, by = "term")
+  out <- merge_left(x, y, by = ".term")
   out <- out[, -1, drop = FALSE]
 
   class(out) <- x.class
@@ -1032,4 +1032,23 @@ print.srp <- function(x, adj = "left", ...){
     attr(x, "note")  <- extract_args(x, key = "note")
     print_booktabs(x, adj = adj, ...)
   }
+}
+
+
+switch_string <- function(language, english = "", chinese = "", number = NULL, sup.first = NULL, sup.last = NULL){
+  value <- switch(language,
+                  en = english,
+                  zh = chinese)
+  if(!is.null(number)){
+    value <- switch(language,
+                    en = paste(sprintf("Table %d:", number), value, sep = "  "),
+                    zh = paste(sprintf("\u8868%d", number),  value, sep = "  "))
+  }
+  if(!is.null(sup.first)){
+    value <- paste(sup.first, value, sep = " ")
+  }
+  if(!is.null(sup.last)){
+    value <- paste(value, sup.last, sep = " ")
+  }
+  value
 }

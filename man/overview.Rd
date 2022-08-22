@@ -11,6 +11,10 @@ overview(data, digits = 2, language = NULL, labels = NULL, ...)
 
 \item{digits}{digits, default 2.}
 
+\item{language}{language language, typically “en”, or "zh", default "en".}
+
+\item{labels}{a data frame contain the column of term, code, and label.}
+
 \item{...}{unused.}
 }
 \value{

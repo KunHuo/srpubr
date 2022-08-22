@@ -11,7 +11,6 @@ format_flex <- function(data, headers = NULL, font.size = 11){
   }
   border <- officer::fp_border(color = "black")
 
-  ft <- flextable::theme_booktabs(ft)
   ft <- flextable::padding(ft, padding = 3, part = "all")
   ft <- flextable::fontsize(ft, size = font.size, part = "all")
   ft <- flextable::font(ft, fontname = "Times New Roman", part = "all")
@@ -20,9 +19,13 @@ format_flex <- function(data, headers = NULL, font.size = 11){
   ft <- flextable::align(ft, align = "center", part = "all")
   ft <- flextable::align(ft, j = 1, align = "left", part = "all")
   ft <- flextable::autofit(ft)
-  ft <- flextable::hline(ft, part = "header", border = border)
-  ft <- flextable::hline_bottom(ft, border = border, part = "body")
-  ft <- flextable::hline_top(ft, border = border, part = "header")
+
+  ft <- flextable::empty_blanks(ft)
+
+  ft <- flextable::hline_bottom(ft, part = "body",   border = border)
+  ft <- flextable::hline_top(ft,    part = "body",   border = border)
+  ft <- flextable::hline_top(ft,    part = "header", border = border)
+
   ft <- flextable::fix_border_issues(ft)
   ft
 }
