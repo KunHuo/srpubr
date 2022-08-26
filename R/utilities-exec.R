@@ -18,7 +18,7 @@ list_rbind <- function(data,
                        dup.var = FALSE,
                        labels = NULL){
 
-  if(class(data) != "list"){
+  if(!inherits(data, "list")){
     stop("Data must be a list.", call. = FALSE)
   }
 

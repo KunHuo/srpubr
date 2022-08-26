@@ -392,11 +392,11 @@ write_docx.list <- function(x, path = "", landscape = FALSE, ...){
       if(length(note) != 0L){
         doc <- body_add_tablenote(doc, value = note)
       }
-    }else if(class(x[[i]]) == "spubr"){
+    }else if(class(x[[i]])[1] == "spubr"){
 
-    }else if(class(x[[i]]) == "flextable"){
+    }else if(class(x[[i]])[1] == "flextable"){
       doc <- body_add_dataframe(doc, value = x[[i]])
-    }else if(class(x[[i]]) == "style"){
+    }else if(class(x[[i]])[1] == "style"){
       value <- x[[i]]$text
       style <- x[[i]]$style
       doc <- body_add_par2(doc, value = value, style = style)

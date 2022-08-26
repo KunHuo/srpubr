@@ -83,7 +83,7 @@ append2.matrix <- function (x, values, after = NULL, rows = FALSE, names = NULL,
     values <- matrix(values, ncol = ncol(x))
     if (!is.null(names)) {
       err <- try(row.names(x) <- names, silent = TRUE)
-      if (class(err) == "try-error")
+      if (inherits(err, "try-error"))
         warning("Could not set rownames.")
     }
     if (!after)
