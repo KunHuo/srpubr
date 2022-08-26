@@ -20,7 +20,6 @@ overview <- function(data, digits = 2, language = NULL, labels = NULL, ...){
 
   out <- lapply(names(data), function(x){
     dv <- data[[x]]
-
     type   <- class(dv)[1]
     unique <- length(unique(stats::na.omit(dv)))
     miss   <- sum(is.na(dv))
