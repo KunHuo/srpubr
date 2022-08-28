@@ -108,7 +108,7 @@ ks_test <- function(data, group = NULL, varnames = NULL, language = NULL, labels
                         digits = digits,
                         language = language,
                         labels = labels,
-                        key.stat = "norm.stat.sw")
+                        key.stat = "norm.stat.ks")
   title <- switch_string(language = language,
                          english = "Kolmogorov-Smirnov normality test",
                          chinese = "Kolmogorov-Smirnov\u6b63\u6001\u6027\u68c0\u9a8c",

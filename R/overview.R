@@ -61,16 +61,19 @@ overview <- function(data, digits = 2, language = NULL, labels = NULL, ...){
     out <- add_lables(out, ldata = labels, col = 2)
   }
 
-  names(out)[names(out) == "variable"] <- string_variable(language)
+  names(out)[names(out) == "variable"] <- dictionary(key = "variable", language)
   names(out)[names(out) == "col"]      <- ifelse(language == "en", "Col",     "\u5217\u7d22\u5f15")
   names(out)[names(out) == "type"]     <- ifelse(language == "en", "Type",    "\u6570\u636e\u7c7b\u578b")
   names(out)[names(out) == "valid"]    <- ifelse(language == "en", "Valid",   "\u6709\u6548\u4f8b\u6570")
   names(out)[names(out) == "unique"]   <- ifelse(language == "en", "Unique",  "\u552f\u4e00\u503c")
   names(out)[names(out) == "miss"]     <- ifelse(language == "en", "Missing", "\u7f3a\u5931\u4f8b\u6570")
 
-  attr(out, "title") <- sprintf("Overview the data [%dx%d]", nrow(data), ncol(data))
-  class(out) <- c("srp.overview", class(out))
-  out
+  title <- sprintf("Overview the data [%dx%d]", nrow(data), ncol(data))
+
+  wrap_output(output = out,
+              class  = c("srp.overview", "srp"),
+              title  = title,
+              short  = "overview")
 }
 
 
@@ -83,5 +86,5 @@ overview <- function(data, digits = 2, language = NULL, labels = NULL, ...){
 #'
 #' @export
 print.srp.overview <- function(x, ...){
-  print_booktabs(x, adj = c("l", "l", "l", "r"), ...)
+  print.srp(x, adj = c("l", "l", "l", "r"), ...)
 }
