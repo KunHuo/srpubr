@@ -18,7 +18,6 @@ desc_numeric <- function(data, group = NULL, varnames = NULL, show.overall = FAL
     }
     res
   }
-
   output <- lapply(varnames, excute)
   output <- do.call(rbind, output)
   output
