@@ -6,14 +6,13 @@ gg_bar_error <- function(data,
                          bar.color = NULL,
                          line.size = 0.25,
                          error.color = bar.color,
-                         error.size = 0.25,
+                         error.size = line.size,
                          error.width = 0.2,
                          language = NULL,
                          font.family = NULL,
                          font.size = NULL,
                          ...
                          ){
-
 
   language    <- get_global_languange(language, default = "en")
   font.family <- get_global_family(font.family, default = "serif")
@@ -33,16 +32,14 @@ gg_bar_error <- function(data,
   by <- select_variable(data, by)
 
   plotdata <- group_exec(data, group = c(x, by), \(d){
-    m <- mean(d[[y]])
-    s <- sd(d[[y]])
+    m <- mean(d[[y]], na.rm = TRUE)
+    s <- sd(d[[y]], na.rm = TRUE)
     lower <- m - s
     upper <- m + s
     data.frame(value = m, lower = lower, upper = upper)
   })
 
-
   by.legend <- ifelse(is.null(by), x, by)
-
 
   pos <- ggplot2::position_dodge(width = bar.width)
 
@@ -63,7 +60,7 @@ gg_bar_error <- function(data,
     gg_ylab(y) +
     gg_delete_x_title()
 
-  ybresks <- pretty(c(0, max(plotdata[["upper"]])), n = 5)
+  ybresks <- pretty(c(0, max(plotdata[["upper"]], na.rm = TRUE)), n = 5)
 
   p <- p +
     ggplot2::scale_y_continuous(breaks = ybresks, limits = c(min(ybresks), max(ybresks)), expand = c(0, 0))

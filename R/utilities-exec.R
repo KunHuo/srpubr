@@ -161,7 +161,7 @@ group_exec <- function(data, group = NULL, func = NULL, ..., labels = NULL, out.
   if(length(group) == 0L){
     sdat <- list(overall = data)
   }else{
-    sdat <- split.data.frame(data, f = data[group], drop = TRUE, sep = "#")
+    sdat <- split.data.frame(data, f = data[group], drop = FALSE, sep = "#")
   }
 
   out <- lapply(sdat, \(d){
