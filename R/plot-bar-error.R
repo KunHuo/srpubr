@@ -3,7 +3,9 @@ gg_bar_error <- function(data,
                          y = NULL,
                          by = NULL,
                          bar.width = 0.6,
+                         bar.color = NULL,
                          line.size = 0.25,
+                         error.color = bar.color,
                          error.size = 0.25,
                          error.width = 0.2){
 
