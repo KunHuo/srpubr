@@ -1,4 +1,12 @@
-gg_bar_error <- function(data, x = NULL, y = NULL, by = NULL, bar.width = 0.6, line.size = 0.25, error.size = 0.25, error.width = 0.2){
+gg_bar_error <- function(data,
+                         x = NULL,
+                         y = NULL,
+                         by = NULL,
+                         bar.width = 0.6,
+                         line.size = 0.25,
+                         error.size = 0.25,
+                         error.width = 0.2){
+
   x  <- select_variable(data, x)
   y  <- select_variable(data, y)
   by <- select_variable(data, by)
@@ -29,5 +37,3 @@ gg_bar_error <- function(data, x = NULL, y = NULL, by = NULL, bar.width = 0.6, l
     ggplot2::scale_y_continuous(breaks = ybresks, limits = c(min(ybresks), max(ybresks)), expand = c(0, 0))
 }
 
-
-gg_bar_error(mtcars, x = "vs", y = "mpg", by = "am")
