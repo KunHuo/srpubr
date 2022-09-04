@@ -122,10 +122,12 @@ fct_reverse <- function(data, varname){
 #' @param data a data frame.
 #' @param varname a string of variable name.
 #' @param order order levels.
+#' @param exclude a vector of values to be excluded when forming the set of levels.
+#' This may be factor with the same level set as x or should be a character.
 #'
 #' @return a data frame.
 #' @export
-fct_reorder <- function(data, varname, order) {
+fct_reorder <- function(data, varname, order, exclude = NA) {
   levels <- levels(data[[varname]])
   index <- order %in% levels
   if (!all(index)) {
@@ -134,7 +136,7 @@ fct_reorder <- function(data, varname, order) {
     stop(text, call. = FALSE)
   }
   levels <- c(order, setdiff(levels, order))
-  data[[varname]] <- factor(data[[varname]], levels = levels)
+  data[[varname]] <- factor(data[[varname]], levels = levels, exclude = exclude)
   data
 }
 

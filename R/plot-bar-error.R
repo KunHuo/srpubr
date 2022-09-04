@@ -3,6 +3,8 @@ gg_bar_error <- function(data,
                          y = "..count",
                          by = NULL,
                          func = "mean_sd",
+                         na.include = TRUE,
+                         x.order = NULL,
                          bar.width = 0.6,
                          bar.color = NULL,
                          bar.label = FALSE,
@@ -18,7 +20,6 @@ gg_bar_error <- function(data,
                          font.size = NULL,
                          ...
                          ){
-
   language    <- get_global_languange(language, default = "en")
   font.family <- get_global_family(font.family, default = "serif")
   font.size   <- get_global_fontsize(font.size, default = 12)
@@ -35,9 +36,20 @@ gg_bar_error <- function(data,
   x  <- select_variable(data, x)
   by <- select_variable(data, by)
 
-  data[[x]] <- factor(data[[x]], exclude = NULL)
+
+  if(na.include){
+    exclude.na <- NULL
+  }else{
+    exclude.na <- NA
+  }
+
+  data[[x]] <- factor(data[[x]], exclude = exclude.na)
   if(!is.null(by)){
-    data[[by]] <- factor(data[[by]], exclude = NULL)
+    data[[by]] <- factor(data[[by]], exclude = exclude.na)
+  }
+
+  if(!is.null(x.order)){
+    data <- fct_reorder(data, x, x.order, exclude = exclude.na)
   }
 
   if(!is.null(y)){
@@ -63,7 +75,6 @@ gg_bar_error <- function(data,
                                            fill  = ifelse(is.null(by), x, by),
                                            color = ifelse(is.null(by), x, by)))
 
-
   if("ymin" %in% names(plotdata)){
     p <- p +ggplot2::geom_errorbar(ggplot2::aes_string(ymin = "ymin", ymax = "ymax"),
                                    width = error.width,
@@ -73,7 +84,6 @@ gg_bar_error <- function(data,
   }else{
     ybresks <- pretty(c(0, max(plotdata[["y"]], na.rm = TRUE)), n = 5)
   }
-
 
   if(y == "..count"){
     ylab <- "Count"
@@ -106,7 +116,6 @@ gg_bar_error <- function(data,
    }
  }
 
-
   p <- p + gg_theme_sci(legend.key.size = 0.8,
                  axis.line.size = line.size,
                  font.family = font.family,
@@ -115,7 +124,6 @@ gg_bar_error <- function(data,
     gg_ylab(ylab) +
     gg_delete_x_title() +
     ggplot2::scale_y_continuous(breaks = ybresks, limits = c(min(ybresks), max(ybresks)), expand = c(0, 0))
-
 
   if(is.null(by)){
     p <- p + gg_delete_legend()
