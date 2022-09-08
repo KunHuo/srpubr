@@ -427,3 +427,67 @@ gg_save <- function(plot,
    showtext::showtext_auto(FALSE)
  }
 }
+
+
+
+find_col_x <- function(plot, col = NULL){
+  data <- ggplot2::ggplot_build(plot)$data[[1]]
+  x <- data[["x"]]
+  x <- sort(x)
+  if(is.null(col)){
+    attr(x, "class") <- NULL
+    x
+  }else{
+    attr(x, "class") <- NULL
+    x[col]
+  }
+}
+
+
+find_col_y <- function(plot, col){
+  data <- ggplot2::ggplot_build(plot)$data
+  x <- find_col_x(plot, col)
+  sapply(x, \(i){
+    if(is.na(i)){
+      NA
+    }else{
+      max(sapply(data, \(d){
+        if("ymax" %in% names(d)){
+          d <- d[d$x == i, "ymax"]
+          if(length(d) == 0L){
+            NA
+          }else{
+            max(d, na.rm = TRUE)
+          }
+        }else if("y" %in% names(d)){
+          d <- d[d$x == i, "y"]
+          if(length(d) == 0L){
+            NA
+          }else{
+            max(d, na.rm = TRUE)
+          }
+        }
+      }), na.rm = TRUE)
+    }
+  })
+}
+
+
+add_col_label <- function(plot, col, y = NULL, label, vjust = -0.5, family = "serif", size = 10, color = "black"){
+
+  x <- find_col_x(plot = plot, col = col)
+
+  if(is.null(y)){
+    y <- find_col_y(plot = plot, col = col)
+  }
+
+  plot +
+    ggplot2::annotate(geom = "text",
+                      x = x,
+                      y = y,
+                      label = label,
+                      vjust = vjust,
+                      family = family,
+                      size = size / 2.875,
+                      color = color)
+}
