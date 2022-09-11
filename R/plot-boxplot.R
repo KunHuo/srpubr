@@ -5,7 +5,6 @@ gg_boxplot <- function(data, x, y, by = NULL, box.width = 0.5,
                        font.family = NULL,
                        font.size = NULL){
 
-
   language    <- get_global_languange(language, default = "en")
   font.family <- get_global_family(font.family, default = "serif")
   font.size   <- get_global_fontsize(font.size, default = 12)
@@ -20,7 +19,6 @@ gg_boxplot <- function(data, x, y, by = NULL, box.width = 0.5,
   x  <- select_variable(data, x)
   y  <- select_variable(data, y)
   by <- select_variable(data, by)
-
 
   if(na.include){
     exclude.na <- NULL
@@ -37,9 +35,11 @@ gg_boxplot <- function(data, x, y, by = NULL, box.width = 0.5,
     data <- fct_reorder(data, x, x.order, exclude = exclude.na)
   }
 
-
   p <- ggplot2::ggplot(data) +
-    ggplot2::geom_boxplot(ggplot2::aes_string(x = x, y = y, fill = ifelse(is.null(by), x, by)), width = box.width, color = "black", size = 0.25) +
+    ggplot2::geom_boxplot(ggplot2::aes_string(x = x, y = y, fill = ifelse(is.null(by), x, by)),
+                          width = box.width,
+                          color = "black",
+                          size = 0.25) +
     gg_theme_sci()
 
   gbdata <-  ggplot2::ggplot_build(p)$data[[1]]
@@ -53,6 +53,5 @@ gg_boxplot <- function(data, x, y, by = NULL, box.width = 0.5,
   }
 
   p
-
 }
 
